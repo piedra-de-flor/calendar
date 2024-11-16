@@ -6,6 +6,7 @@ import com.example.calendar.domain.entity.Member;
 import com.example.calendar.dto.member.FriendDto;
 import com.example.calendar.dto.member.GroupAddFriendDto;
 import com.example.calendar.dto.member.GroupCreateDto;
+import com.example.calendar.dto.member.GroupDto;
 import com.example.calendar.repository.GroupRepository;
 import com.example.calendar.repository.GroupingRepository;
 import com.example.calendar.repository.MemberRepository;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
@@ -77,5 +80,33 @@ public class GroupService {
         groupingRepository.save(grouping);
 
         return new FriendDto(friend.getId(), friend.getEmail(), friend.getName());
+    }
+
+    public List<FriendDto> readAllMemberInGroup(long groupId) {
+        List<FriendDto> response = new ArrayList<>();
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(NoSuchElementException::new);
+
+        for (Grouping grouping : group.getGroupings()) {
+            Member groupMember = grouping.getMember();
+            response.add(new FriendDto(groupMember.getId(), groupMember.getEmail(), groupMember.getName()));
+        }
+
+        return response;
+    }
+
+    public List<GroupDto> readAllMyGroups(String memberEmail) {
+        List<GroupDto> response = new ArrayList<>();
+
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        for (Grouping grouping : member.getGroupings()) {
+            Group myGroup = grouping.getGroup();
+            response.add(new GroupDto(myGroup.getId(), myGroup.getName()));
+        }
+
+        return response;
     }
 }
