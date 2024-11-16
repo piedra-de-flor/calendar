@@ -12,22 +12,23 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Group {
+@Table(name = "team")
+public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;
 
-    @OneToMany(mappedBy = "group")
-    private List<Grouping> groupings = new ArrayList<>();
+    @OneToMany(mappedBy = "team")
+    private List<Teaming> teamings = new ArrayList<>();
 
     @Builder
-    public Group(String name) {
+    public Team(String name) {
         this.name = name;
     }
 
-    public void addGrouping(Grouping grouping) {
-        groupings.add(grouping);
+    public void addGrouping(Teaming teaming) {
+        teamings.add(teaming);
     }
 }

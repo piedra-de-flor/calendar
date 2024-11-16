@@ -1,7 +1,7 @@
 package com.example.calendar.dto.group;
 
-public record GroupDto(
-        long groupId,
+public record TeamDto(
+        long teamId,
         String name
 ) {
 }

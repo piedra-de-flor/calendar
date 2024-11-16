@@ -1,7 +1,7 @@
 package com.example.calendar.dto.invitation;
 
-public record GroupInvitationDto (
+public record TeamInvitationDto(
         String receiverEmail,
-        long groupId
+        long teamId
 ) {
 }

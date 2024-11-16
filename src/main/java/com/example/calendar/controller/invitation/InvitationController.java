@@ -1,7 +1,7 @@
 package com.example.calendar.controller.invitation;
 
 import com.example.calendar.dto.invitation.FriendInvitationDto;
-import com.example.calendar.dto.invitation.GroupInvitationDto;
+import com.example.calendar.dto.invitation.TeamInvitationDto;
 import com.example.calendar.dto.invitation.InvitationDto;
 import com.example.calendar.service.invitation.InvitationFacadeService;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +26,12 @@ public class InvitationController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/invitation/group")
-    public ResponseEntity<Boolean> createGroupInvitation(@RequestBody GroupInvitationDto invitationDto) {
+    @PostMapping("/invitation/team")
+    public ResponseEntity<Boolean> createTeamInvitation(@RequestBody TeamInvitationDto invitationDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 
-        boolean response = invitationFacadeService.sendGroupInvitation(memberEmail, invitationDto);
+        boolean response = invitationFacadeService.sendTeamInvitation(memberEmail, invitationDto);
         return ResponseEntity.ok(response);
     }
 

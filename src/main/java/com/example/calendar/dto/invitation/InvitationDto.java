@@ -8,9 +8,9 @@ public record InvitationDto (
         String senderName,
         String receiverEmail,
         String receiverName,
-        Optional<String> GroupName
+        Optional<String> teamName
 ){
-    public InvitationDto(String type, String senderEmail, String senderName, String receiverEmail, String receiverName, String groupName) {
-        this(type, senderEmail, senderName, receiverEmail, receiverName, Optional.ofNullable(groupName));
+    public InvitationDto(String type, String senderEmail, String senderName, String receiverEmail, String receiverName, String teamName) {
+        this(type, senderEmail, senderName, receiverEmail, receiverName, Optional.ofNullable(teamName));
     }
 }

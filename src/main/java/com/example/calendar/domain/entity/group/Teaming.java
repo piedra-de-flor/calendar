@@ -1,6 +1,5 @@
 package com.example.calendar.domain.entity.group;
 
-import com.example.calendar.domain.entity.group.Group;
 import com.example.calendar.domain.entity.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -11,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Grouping {
+@Table(name = "teaming")
+public class Teaming {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -21,16 +21,16 @@ public class Grouping {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "group_id")
-    private Group group;
+    @JoinColumn(name = "team_id")
+    private Team team;
 
     @Builder
-    public Grouping(Member member, Group group) {
+    public Teaming(Member member, Team team) {
         this.member = member;
-        this.group = group;
+        this.team = team;
     }
 
     public String getGroupName() {
-        return group.getName();
+        return team.getName();
     }
 }

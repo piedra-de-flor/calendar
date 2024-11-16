@@ -1,7 +1,7 @@
 package com.example.calendar.service.invitation;
 
-import com.example.calendar.domain.entity.group.Group;
-import com.example.calendar.domain.entity.group.Grouping;
+import com.example.calendar.domain.entity.group.Team;
+import com.example.calendar.domain.entity.group.Teaming;
 import com.example.calendar.domain.entity.invitation.FriendInvitation;
 import com.example.calendar.domain.entity.invitation.GroupInvitation;
 import com.example.calendar.domain.entity.invitation.Invitation;
@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -36,38 +35,24 @@ public class InvitationService {
     }
 
     @Transactional
-    public Invitation createGroupInvitation(Member sender, Member receiver, Group group, Grouping grouping) {
-        Invitation groupInvitation = GroupInvitation.builder()
-                .sender(sender)
-                .receiver(receiver)
-                .group(group)
-                .grouping(grouping)
-                .build();
+    public Invitation createGroupInvitation(Member sender, Member receiver, Team team, Teaming teaming) {
+        Invitation groupInvitation = new GroupInvitation(receiver, sender, team, teaming);
 
         invitationRepository.save(groupInvitation);
         return groupInvitation;
     }
 
     public List<Invitation> realAllSendInvitations(Member member) {
-        return member.getInvitations().stream()
-                .filter(invitation -> isSent(invitation, member))
-                .collect(Collectors.toList());
+        return member.getSentInvitations();
     }
 
     public List<Invitation> realAllReceiveInvitations(Member member) {
-        return member.getInvitations().stream()
-                .filter(invitation -> isReceived(invitation, member))
-                .collect(Collectors.toList());
+        return member.getReceivedInvitations();
     }
 
     public Invitation readInvitation(long invitationId) {
         return invitationRepository.findById(invitationId)
                 .orElseThrow(NoSuchElementException::new);
-    }
-
-    private boolean isReceived(Invitation invitation, Member member) {
-        Member receiver = invitation.getReceiver();
-        return receiver.getEmail().equals(member.getEmail());
     }
 
     private boolean isSent(Invitation invitation, Member member) {
@@ -85,7 +70,7 @@ public class InvitationService {
     }
 
     @Scheduled(cron = "0 59 23 * * *")
-    private void deleteGroup() {
+    public void deleteInvitation() {
         List<Invitation> targetInvitations = invitationRepository.findAllByStateEquals(InvitationState.DENIED);
         invitationRepository.deleteAll(targetInvitations);
         log.info("Deleted {} denied invitations", targetInvitations.size());

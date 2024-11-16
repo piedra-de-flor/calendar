@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum InvitationType {
-    GROUP("GROUP"),
+    TEAM("TEAM"),
     FRIEND("FRIEND");
 
     private final String type;

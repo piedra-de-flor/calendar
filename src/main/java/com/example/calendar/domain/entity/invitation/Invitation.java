@@ -21,11 +21,11 @@ public class Invitation {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "receiver_id")
     private Member receiver;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "sender_id")
     private Member sender;
     private LocalDate date;
 

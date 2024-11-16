@@ -3,11 +3,11 @@ package com.example.calendar.dto.group;
 import java.util.List;
 import java.util.Objects;
 
-public record GroupCreateDto(
+public record TeamCreateDto(
         List<Long> friends,
         String name
 ) {
-    public GroupCreateDto {
+    public TeamCreateDto {
         Objects.requireNonNull(name, "Name must not be null");
 
         if (name.isEmpty() || name.length() > 10) {

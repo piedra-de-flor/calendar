@@ -1,12 +1,10 @@
 package com.example.calendar.domain.entity.invitation;
 
-import com.example.calendar.domain.entity.group.Group;
-import com.example.calendar.domain.entity.group.Grouping;
+import com.example.calendar.domain.entity.group.Team;
+import com.example.calendar.domain.entity.group.Teaming;
 import com.example.calendar.domain.entity.member.Member;
-import com.example.calendar.domain.vo.invitation.InvitationType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,22 +14,20 @@ import lombok.NoArgsConstructor;
 @DiscriminatorValue("GROUP")
 public class GroupInvitation extends Invitation {
     @ManyToOne
-    @JoinColumn(name = "group_id")
-    private Group group;
+    private Team team;
 
-    @OneToOne(mappedBy = "invitation")
-    private Grouping grouping;
+    @OneToOne
+    private Teaming teaming;
 
-    @Builder
-    public GroupInvitation(Member receiver, Member sender, Group group, Grouping grouping) {
+    public GroupInvitation(Member receiver, Member sender, Team team, Teaming teaming) {
         super(receiver, sender);
-        this.group = group;
-        this.grouping = grouping;
+        this.team = team;
+        this.teaming = teaming;
     }
 
     @Override
     protected void acceptHandle() {
-        group.addGrouping(grouping);
-        super.getReceiver().addGroup(grouping);
+        team.addGrouping(teaming);
+        super.getReceiver().addTeam(teaming);
     }
 }
