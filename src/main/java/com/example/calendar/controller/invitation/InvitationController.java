@@ -36,13 +36,13 @@ public class InvitationController {
     }
 
     @PostMapping("/invitation/accept")
-    public ResponseEntity<Boolean> acceptInvitation(@RequestBody long invitationId) {
+    public ResponseEntity<Boolean> acceptInvitation(@RequestParam long invitationId) {
         boolean response = invitationFacadeService.acceptInvitation(invitationId);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/invitation/denied")
-    public ResponseEntity<Boolean> deniedInvitation(@RequestBody long invitationId) {
+    public ResponseEntity<Boolean> deniedInvitation(@RequestParam long invitationId) {
         boolean response = invitationFacadeService.deniedInvitation(invitationId);
         return ResponseEntity.ok(response);
     }

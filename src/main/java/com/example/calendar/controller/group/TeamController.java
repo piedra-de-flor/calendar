@@ -34,7 +34,7 @@ public class TeamController {
     }
 
     @GetMapping("/team/friends")
-    public ResponseEntity<List<FriendDto>> readAllFriendsInTeam(@RequestBody long teamId) {
+    public ResponseEntity<List<FriendDto>> readAllFriendsInTeam(@RequestParam long teamId) {
         List<FriendDto> response = teamService.readAllMemberInTeam(teamId);
         return ResponseEntity.ok(response);
     }
@@ -49,7 +49,7 @@ public class TeamController {
     }
 
     @DeleteMapping("/team")
-    public ResponseEntity<Boolean> exitTeam(@RequestBody long teamId) {
+    public ResponseEntity<Boolean> exitTeam(@RequestParam long teamId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 
