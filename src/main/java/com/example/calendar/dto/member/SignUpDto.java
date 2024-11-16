@@ -3,11 +3,11 @@ package com.example.calendar.dto.member;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public record MemberCreateDto(String email, String password, String name) {
+public record SignUpDto(String email, String password, String name) {
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
 
-    public MemberCreateDto {
+    public SignUpDto {
         Objects.requireNonNull(email, "Email must not be null");
         Objects.requireNonNull(password, "Password must not be null");
         Objects.requireNonNull(name, "Name must not be null");
