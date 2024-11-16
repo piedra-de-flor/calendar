@@ -1,7 +1,7 @@
 package com.example.calendar.service.member;
 
-import com.example.calendar.domain.entity.CustomMemberDetails;
-import com.example.calendar.domain.entity.Member;
+import com.example.calendar.domain.entity.member.CustomMemberDetails;
+import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

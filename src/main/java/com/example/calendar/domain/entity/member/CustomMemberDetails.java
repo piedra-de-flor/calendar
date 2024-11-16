@@ -1,4 +1,4 @@
-package com.example.calendar.domain.entity;
+package com.example.calendar.domain.entity.member;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
