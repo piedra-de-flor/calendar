@@ -1,11 +1,10 @@
-package com.example.calendar.controller.member;
+package com.example.calendar.controller.group;
 
 import com.example.calendar.dto.member.FriendDto;
-import com.example.calendar.dto.member.GroupAddFriendDto;
-import com.example.calendar.dto.member.GroupCreateDto;
-import com.example.calendar.dto.member.GroupDto;
-import com.example.calendar.service.member.GroupService;
-import lombok.Getter;
+import com.example.calendar.dto.group.GroupAddFriendDto;
+import com.example.calendar.dto.group.GroupCreateDto;
+import com.example.calendar.dto.group.GroupDto;
+import com.example.calendar.service.group.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

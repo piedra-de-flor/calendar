@@ -1,6 +1,6 @@
 package com.example.calendar.service.member;
 
-import com.example.calendar.domain.entity.Member;
+import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.dto.member.MemberDto;
 import com.example.calendar.dto.member.MemberUpdateDto;
 import com.example.calendar.repository.MemberRepository;

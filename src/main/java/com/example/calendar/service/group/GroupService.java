@@ -1,12 +1,12 @@
-package com.example.calendar.service.member;
+package com.example.calendar.service.group;
 
-import com.example.calendar.domain.entity.Group;
-import com.example.calendar.domain.entity.Grouping;
-import com.example.calendar.domain.entity.Member;
+import com.example.calendar.domain.entity.member.Group;
+import com.example.calendar.domain.entity.member.Grouping;
+import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.dto.member.FriendDto;
-import com.example.calendar.dto.member.GroupAddFriendDto;
-import com.example.calendar.dto.member.GroupCreateDto;
-import com.example.calendar.dto.member.GroupDto;
+import com.example.calendar.dto.group.GroupAddFriendDto;
+import com.example.calendar.dto.group.GroupCreateDto;
+import com.example.calendar.dto.group.GroupDto;
 import com.example.calendar.repository.GroupRepository;
 import com.example.calendar.repository.GroupingRepository;
 import com.example.calendar.repository.MemberRepository;

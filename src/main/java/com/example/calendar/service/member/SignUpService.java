@@ -1,6 +1,6 @@
 package com.example.calendar.service.member;
 
-import com.example.calendar.domain.entity.Member;
+import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

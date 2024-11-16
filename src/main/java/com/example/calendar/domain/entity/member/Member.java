@@ -1,5 +1,6 @@
-package com.example.calendar.domain.entity;
+package com.example.calendar.domain.entity.member;
 
+import com.example.calendar.domain.entity.member.Grouping;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

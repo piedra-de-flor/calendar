@@ -1,4 +1,4 @@
-package com.example.calendar.dto.member;
+package com.example.calendar.dto.group;
 
 import java.util.List;
 import java.util.Objects;
