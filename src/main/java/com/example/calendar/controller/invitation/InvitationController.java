@@ -66,7 +66,7 @@ public class InvitationController {
     }
 
     @DeleteMapping("/invitation")
-    public ResponseEntity<Boolean> cancelInvitation(@RequestBody long invitationId) {
+    public ResponseEntity<Boolean> cancelInvitation(@RequestParam long invitationId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 

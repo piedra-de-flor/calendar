@@ -33,9 +33,9 @@ public class Invitation {
     private InvitationState state = InvitationState.NOT_DECIDE;
 
     @Builder
-    public Invitation(Member receiver, Member sender) {
-        this.receiver = receiver;
+    public Invitation(Member sender, Member receiver) {
         this.sender = sender;
+        this.receiver = receiver;
         this.date = LocalDate.now();
     }
 

@@ -2,7 +2,7 @@ package com.example.calendar.service.invitation;
 
 import com.example.calendar.domain.entity.group.Team;
 import com.example.calendar.domain.entity.group.Teaming;
-import com.example.calendar.domain.entity.invitation.GroupInvitation;
+import com.example.calendar.domain.entity.invitation.TeamInvitation;
 import com.example.calendar.domain.entity.invitation.Invitation;
 import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.vo.invitation.InvitationType;
@@ -16,10 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -37,6 +34,10 @@ public class InvitationFacadeService {
         Member receiver = memberRepository.findByEmail(invitationDto.receiverEmail())
                 .orElseThrow(NoSuchElementException::new);
 
+        if (isFriend(sender, receiver)) {
+            throw new IllegalArgumentException("already friend");
+        }
+
         Invitation friendInvitation = invitationService.createFriendInvitation(sender, receiver);
         receiver.addInvitation(friendInvitation);
         return true;
@@ -53,14 +54,18 @@ public class InvitationFacadeService {
         Team team = teamRepository.findById(invitationDto.teamId())
                 .orElseThrow(NoSuchElementException::new);
 
-        Teaming teaming = Teaming.builder()
-                .team(team)
-                .member(receiver)
-                .build();
+        if (inTheTeam(sender, invitationDto.teamId()) && !inTheTeam(receiver, invitationDto.teamId())) {
+            Teaming teaming = Teaming.builder()
+                    .team(team)
+                    .member(receiver)
+                    .build();
 
-        Invitation groupInvitation = invitationService.createGroupInvitation(sender, receiver, team, teaming);
-        receiver.addInvitation(groupInvitation);
-        return true;
+            Invitation groupInvitation = invitationService.createTeamInvitation(sender, receiver, team, teaming);
+            receiver.addInvitation(groupInvitation);
+            return true;
+        }
+
+        throw new IllegalArgumentException("already in the team or you don't have auth");
     }
 
     @Transactional
@@ -69,8 +74,8 @@ public class InvitationFacadeService {
 
         invitation.accept();
 
-        if (invitation.getClass() == GroupInvitation.class) {
-            teamingRepository.save(((GroupInvitation) invitation).getTeaming());
+        if (invitation.getClass() == TeamInvitation.class) {
+            teamingRepository.save(((TeamInvitation) invitation).getTeaming());
         }
 
         return true;
@@ -109,21 +114,21 @@ public class InvitationFacadeService {
         for (Invitation invitation : invitations) {
             InvitationDto invitationDto;
 
-            if (invitation.getClass() == GroupInvitation.class) {
+            if (invitation.getClass() == TeamInvitation.class) {
                 invitationDto = new InvitationDto(
                         InvitationType.TEAM.getType(),
-                        invitation.getReceiver().getEmail(),
-                        invitation.getReceiver().getName(),
                         invitation.getSender().getEmail(),
                         invitation.getSender().getName(),
-                        ((GroupInvitation) invitation).getTeam().getName());
+                        invitation.getReceiver().getEmail(),
+                        invitation.getReceiver().getName(),
+                        ((TeamInvitation) invitation).getTeam().getName());
             } else {
                 invitationDto = new InvitationDto(
                         InvitationType.FRIEND.getType(),
-                        invitation.getReceiver().getEmail(),
-                        invitation.getReceiver().getName(),
                         invitation.getSender().getEmail(),
                         invitation.getSender().getName(),
+                        invitation.getReceiver().getEmail(),
+                        invitation.getReceiver().getName(),
                         Optional.empty());
             }
 
@@ -139,5 +144,15 @@ public class InvitationFacadeService {
 
         Invitation invitation = invitationService.readInvitation(invitationId);
         return invitationService.cancelInvitation(member, invitation);
+    }
+
+    private boolean inTheTeam(Member member, long teamId) {
+        return member.getTeamings().stream()
+                .anyMatch(teaming -> teaming.getTeam().getId() == teamId);
+    }
+
+    private boolean isFriend(Member sender, Member receiver) {
+        return sender.getFriends().stream()
+                .anyMatch(aLong -> Objects.equals(aLong, receiver.getId()));
     }
 }

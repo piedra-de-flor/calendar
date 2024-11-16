@@ -12,15 +12,15 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @DiscriminatorValue("GROUP")
-public class GroupInvitation extends Invitation {
+public class TeamInvitation extends Invitation {
     @ManyToOne
     private Team team;
 
     @OneToOne
     private Teaming teaming;
 
-    public GroupInvitation(Member receiver, Member sender, Team team, Teaming teaming) {
-        super(receiver, sender);
+    public TeamInvitation(Member receiver, Member sender, Team team, Teaming teaming) {
+        super(sender, receiver);
         this.team = team;
         this.teaming = teaming;
     }

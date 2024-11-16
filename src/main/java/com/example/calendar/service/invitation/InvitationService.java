@@ -3,7 +3,7 @@ package com.example.calendar.service.invitation;
 import com.example.calendar.domain.entity.group.Team;
 import com.example.calendar.domain.entity.group.Teaming;
 import com.example.calendar.domain.entity.invitation.FriendInvitation;
-import com.example.calendar.domain.entity.invitation.GroupInvitation;
+import com.example.calendar.domain.entity.invitation.TeamInvitation;
 import com.example.calendar.domain.entity.invitation.Invitation;
 import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.vo.invitation.InvitationState;
@@ -25,21 +25,18 @@ public class InvitationService {
 
     @Transactional
     public Invitation createFriendInvitation(Member sender, Member receiver) {
-        Invitation friendInvitation = FriendInvitation.builder()
-                .sender(sender)
-                .receiver(receiver)
-                .build();
+        FriendInvitation friendInvitation = new FriendInvitation(sender, receiver);
 
         invitationRepository.save(friendInvitation);
         return friendInvitation;
     }
 
     @Transactional
-    public Invitation createGroupInvitation(Member sender, Member receiver, Team team, Teaming teaming) {
-        Invitation groupInvitation = new GroupInvitation(receiver, sender, team, teaming);
+    public Invitation createTeamInvitation(Member sender, Member receiver, Team team, Teaming teaming) {
+        Invitation teamInvitation = new TeamInvitation(receiver, sender, team, teaming);
 
-        invitationRepository.save(groupInvitation);
-        return groupInvitation;
+        invitationRepository.save(teamInvitation);
+        return teamInvitation;
     }
 
     public List<Invitation> realAllSendInvitations(Member member) {
