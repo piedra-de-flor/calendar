@@ -1,6 +1,6 @@
 package com.example.calendar.repository;
 
-import com.example.calendar.domain.entity.member.Group;
+import com.example.calendar.domain.entity.group.Group;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

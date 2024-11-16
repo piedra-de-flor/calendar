@@ -1,6 +1,7 @@
 package com.example.calendar.domain.entity.member;
 
-import com.example.calendar.domain.entity.member.Grouping;
+import com.example.calendar.domain.entity.group.Grouping;
+import com.example.calendar.domain.entity.invitation.Invitation;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -32,6 +33,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<Grouping> groupings = new ArrayList<>();;
+
+    @OneToMany(mappedBy = "member")
+    private List<Invitation> invitations = new ArrayList<>();
 
     @Builder
     public Member(String name, String email, String password, String provider, String providerId) {
@@ -67,6 +71,10 @@ public class Member {
 
     public void exitGroup(Grouping grouping) {
         this.groupings.remove(grouping);
+    }
+
+    public void addInvitation(Invitation invitation) {
+        this.invitations.add(invitation);
     }
 
     public List<String> getGroupsNames() {

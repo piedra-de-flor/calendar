@@ -1,7 +1,7 @@
 package com.example.calendar.service.group;
 
-import com.example.calendar.domain.entity.member.Group;
-import com.example.calendar.domain.entity.member.Grouping;
+import com.example.calendar.domain.entity.group.Group;
+import com.example.calendar.domain.entity.group.Grouping;
 import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.dto.member.FriendDto;
 import com.example.calendar.dto.group.GroupAddFriendDto;
@@ -69,7 +69,7 @@ public class GroupService {
 
     @Transactional
     public FriendDto addFriend(GroupAddFriendDto addFriendDto) {
-        Member friend = memberRepository.findById(addFriendDto.friendId())
+        Member friend = memberRepository.findByEmail(addFriendDto.friendEmail())
                 .orElseThrow(NoSuchElementException::new);
 
         Group group = groupRepository.findById(addFriendDto.groupId())
@@ -130,7 +130,7 @@ public class GroupService {
     }
 
     @Scheduled(cron = "0 59 23 * * *")
-    public void deleteGroup() {
+    private void deleteGroup() {
         List<Group> emptyGroups = groupRepository.findAllByGroupingsEmpty();
         groupRepository.deleteAll(emptyGroups);
         log.info("Deleted {} empty groups", emptyGroups.size());

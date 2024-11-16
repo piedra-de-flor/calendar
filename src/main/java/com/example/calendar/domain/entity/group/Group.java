@@ -1,4 +1,4 @@
-package com.example.calendar.domain.entity.member;
+package com.example.calendar.domain.entity.group;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
