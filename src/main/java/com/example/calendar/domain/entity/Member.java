@@ -64,6 +64,10 @@ public class Member {
         this.groupings.add(grouping);
     }
 
+    public void exitGroup(Grouping grouping) {
+        this.groupings.remove(grouping);
+    }
+
     public List<String> getGroupsNames() {
         List<String> names = new ArrayList<>();
 

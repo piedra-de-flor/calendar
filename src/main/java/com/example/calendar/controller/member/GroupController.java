@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -49,6 +46,15 @@ public class GroupController {
         String memberEmail = authentication.getName();
 
         List<GroupDto> response = groupService.readAllMyGroups(memberEmail);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/group")
+    public ResponseEntity<Boolean> exitGroup(@RequestBody long groupId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        boolean response = groupService.exitGroup(memberEmail, groupId);
         return ResponseEntity.ok(response);
     }
 }

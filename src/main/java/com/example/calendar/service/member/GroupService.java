@@ -11,6 +11,8 @@ import com.example.calendar.repository.GroupRepository;
 import com.example.calendar.repository.GroupingRepository;
 import com.example.calendar.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
+@Slf4j
 @Service
 public class GroupService {
     private GroupRepository groupRepository;
@@ -108,5 +111,28 @@ public class GroupService {
         }
 
         return response;
+    }
+
+    @Transactional
+    public boolean exitGroup(String memberEmail, long groupId) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(NoSuchElementException::new);
+
+        Grouping grouping = groupingRepository.findByMemberAndGroup(member, group)
+                .orElseThrow(NoSuchElementException::new);
+
+        member.exitGroup(grouping);
+
+        return true;
+    }
+
+    @Scheduled(cron = "0 59 23 * * *")
+    public void deleteGroup() {
+        List<Group> emptyGroups = groupRepository.findAllByGroupingsEmpty();
+        groupRepository.deleteAll(emptyGroups);
+        log.info("Deleted {} empty groups", emptyGroups.size());
     }
 }
