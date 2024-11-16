@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@Slf4j
 @RestController
 public class MemberController {
     private final MemberFacadeService service;

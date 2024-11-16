@@ -32,6 +32,9 @@ public class Member {
     private String provider;
     private String providerId;
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    private List<Long> friends = new ArrayList<>();
+
     @Builder
     public Member(String name, String email, String password, String provider, String providerId) {
         this.name = name;
