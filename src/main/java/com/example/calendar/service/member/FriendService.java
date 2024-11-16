@@ -22,7 +22,7 @@ public class FriendService {
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(NoSuchElementException::new);
 
-        member.getFriends().add(friendId);
+        member.addFriends(friendId);
 
         return true;
     }
@@ -49,7 +49,7 @@ public class FriendService {
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(NoSuchElementException::new);
 
-        member.getFriends().remove(friendId);
+        member.deleteFriends(friendId);
 
         return true;
     }
