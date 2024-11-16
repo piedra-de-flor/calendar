@@ -16,7 +16,7 @@ public class FriendController {
     private final FriendService friendService;
 
     @PostMapping("/friend")
-    public ResponseEntity<Boolean> createFriend(@RequestBody long friendId) {
+    public ResponseEntity<Boolean> createFriend(@RequestParam long friendId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 
@@ -34,7 +34,7 @@ public class FriendController {
     }
 
     @DeleteMapping("/friend")
-    public ResponseEntity<Boolean> deleteFriend(@RequestBody long friendId) {
+    public ResponseEntity<Boolean> deleteFriend(@RequestParam long friendId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 

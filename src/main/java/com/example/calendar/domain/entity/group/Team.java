@@ -1,4 +1,4 @@
-package com.example.calendar.domain.entity.member;
+package com.example.calendar.domain.entity.group;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -7,27 +7,30 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Group {
+@Table(name = "team")
+public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;
 
-    @OneToMany(mappedBy = "group")
-    private List<Grouping> groupings = new ArrayList<>();
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Teaming> teamings = new HashSet<>();
 
     @Builder
-    public Group(String name) {
+    public Team(String name) {
         this.name = name;
     }
 
-    public void addGrouping(Grouping grouping) {
-        groupings.add(grouping);
+    public void addTeaming(Teaming teaming) {
+        teamings.add(teaming);
     }
 }

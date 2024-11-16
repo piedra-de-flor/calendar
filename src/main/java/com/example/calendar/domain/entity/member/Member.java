@@ -1,6 +1,7 @@
 package com.example.calendar.domain.entity.member;
 
-import com.example.calendar.domain.entity.member.Grouping;
+import com.example.calendar.domain.entity.group.Teaming;
+import com.example.calendar.domain.entity.invitation.Invitation;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,7 +32,13 @@ public class Member {
     private List<Long> friends = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private List<Grouping> groupings = new ArrayList<>();;
+    private List<Teaming> teamings = new ArrayList<>();;
+
+    @OneToMany(mappedBy = "receiver")
+    private List<Invitation> receivedInvitations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sender")
+    private List<Invitation> sentInvitations = new ArrayList<>();
 
     @Builder
     public Member(String name, String email, String password, String provider, String providerId) {
@@ -61,19 +68,28 @@ public class Member {
         this.friends.remove(friendId);
     }
 
-    public void addGroup(Grouping grouping) {
-        this.groupings.add(grouping);
+    public void addTeam(Teaming teaming) {
+        this.teamings.add(teaming);
     }
 
-    public void exitGroup(Grouping grouping) {
-        this.groupings.remove(grouping);
+    public void exitTeam(Teaming teaming) {
+        this.teamings.remove(teaming);
     }
 
-    public List<String> getGroupsNames() {
+    public void addInvitation(Invitation invitation) {
+        String senderEmail = invitation.getSender().getEmail();
+        if (senderEmail.equals(this.email)) {
+            sentInvitations.add(invitation);
+        } else {
+            receivedInvitations.add(invitation);
+        }
+    }
+
+    public List<String> getTeamsNames() {
         List<String> names = new ArrayList<>();
 
-        for (Grouping grouping : groupings) {
-            names.add(grouping.getGroupName());
+        for (Teaming teaming : teamings) {
+            names.add(teaming.getTeamName());
         }
 
         return names;
