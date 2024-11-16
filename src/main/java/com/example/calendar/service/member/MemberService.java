@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class MemberService {
-    private SignInService signInService;
-    private SignUpService signUpService;
+    private final SignInService signInService;
+    private final SignUpService signUpService;
 
     public String signUp(SignUpDto signUpDto) {
         return signUpService.signUp(signUpDto.email(), signUpDto.password(), signUpDto.name());

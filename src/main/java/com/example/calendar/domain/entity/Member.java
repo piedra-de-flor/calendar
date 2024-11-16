@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Member implements UserDetails {
+public class Member {
     @Id
-    @GeneratedValue
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String email;
     private String password;
     private String name;
@@ -29,23 +29,16 @@ public class Member implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 
+    private String provider;
+    private String providerId;
+
     @Builder
-    public Member(UUID id, String name, String email, String password) {
-        this.id = id;
+    public Member(String name, String email, String password, String provider, String providerId) {
         this.name = name;
         this.email = email;
         this.password = password;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public String getUsername() {
-        return this.email;
+        this.roles.add("USER");
+        this.provider = provider;
+        this.providerId = providerId;
     }
 }
