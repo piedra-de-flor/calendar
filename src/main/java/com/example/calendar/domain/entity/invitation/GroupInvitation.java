@@ -27,7 +27,7 @@ public class GroupInvitation extends Invitation {
 
     @Override
     protected void acceptHandle() {
-        team.addGrouping(teaming);
+        team.addTeaming(teaming);
         super.getReceiver().addTeam(teaming);
     }
 }

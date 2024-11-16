@@ -58,7 +58,7 @@ public class TeamService {
                     .team(team)
                     .build();
 
-            team.addGrouping(friendTeaming);
+            team.addTeaming(friendTeaming);
             teamingRepository.save(friendTeaming);
         }
 

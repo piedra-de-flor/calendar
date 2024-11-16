@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -20,15 +22,15 @@ public class Team {
 
     private String name;
 
-    @OneToMany(mappedBy = "team")
-    private List<Teaming> teamings = new ArrayList<>();
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Teaming> teamings = new HashSet<>();
 
     @Builder
     public Team(String name) {
         this.name = name;
     }
 
-    public void addGrouping(Teaming teaming) {
+    public void addTeaming(Teaming teaming) {
         teamings.add(teaming);
     }
 }

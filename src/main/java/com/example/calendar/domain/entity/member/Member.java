@@ -89,7 +89,7 @@ public class Member {
         List<String> names = new ArrayList<>();
 
         for (Teaming teaming : teamings) {
-            names.add(teaming.getGroupName());
+            names.add(teaming.getTeamName());
         }
 
         return names;
