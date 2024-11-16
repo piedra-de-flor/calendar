@@ -41,4 +41,14 @@ public class Member {
         this.provider = provider;
         this.providerId = providerId;
     }
+
+    public void update(String name, String password) {
+        if (name != null) {
+            this.name = name;
+        }
+
+        if (password != null) {
+            this.password = password;
+        }
+    }
 }

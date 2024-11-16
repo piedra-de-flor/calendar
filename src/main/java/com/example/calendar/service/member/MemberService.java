@@ -1,22 +1,48 @@
 package com.example.calendar.service.member;
 
-import com.example.calendar.dto.member.JwtToken;
-import com.example.calendar.dto.member.SignInDto;
-import com.example.calendar.dto.member.SignUpDto;
+import com.example.calendar.domain.entity.Member;
+import com.example.calendar.dto.member.MemberDto;
+import com.example.calendar.dto.member.MemberUpdateDto;
+import com.example.calendar.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
 public class MemberService {
-    private final SignInService signInService;
-    private final SignUpService signUpService;
+    private final MemberRepository memberRepository;
 
-    public String signUp(SignUpDto signUpDto) {
-        return signUpService.signUp(signUpDto.email(), signUpDto.password(), signUpDto.name());
+    public MemberDto readMemberInfo(String memberEmail) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        return new MemberDto(memberEmail, member.getName());
     }
 
-    public JwtToken signIn(SignInDto signInDto) {
-        return signInService.signIn(signInDto.email(), signInDto.password());
+    @Transactional
+    public MemberUpdateDto update(MemberUpdateDto updateDto, String memberEmail) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        if (member.getPassword().equals(updateDto.password())) {
+            member.update(updateDto.name(), updateDto.password());
+        }
+
+        return updateDto;
+    }
+
+    @Transactional
+    public boolean delete(String memberEmail, String password) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        if (member.getPassword().equals(password)) {
+            memberRepository.delete(member);
+        }
+
+        return true;
     }
 }

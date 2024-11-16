@@ -26,4 +26,8 @@ public class SignUpService {
         Member savedMember = memberRepository.save(newMember);
         return savedMember.getName();
     }
+
+    public boolean canName(String name) {
+        return memberRepository.existsByName(name);
+    }
 }
