@@ -3,6 +3,8 @@ package com.example.calendar.service.schedule;
 import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.entity.schedule.Category;
 import com.example.calendar.domain.entity.schedule.Task;
+import com.example.calendar.dto.schedule.DailyTaskDto;
+import com.example.calendar.dto.schedule.MonthlyTaskDto;
 import com.example.calendar.dto.schedule.TaskCreateDto;
 import com.example.calendar.dto.schedule.TaskDto;
 import com.example.calendar.repository.CategoryRepository;
@@ -17,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -71,17 +72,36 @@ public class TaskService {
         throw new IllegalArgumentException("you don't have auth to delete task");
     }
 
-    public List<TaskDto> readTask(String memberEmail, LocalDate date) {
-        List<TaskDto> response = new ArrayList<>();
+    public DailyTaskDto readDailyTasks(String memberEmail, LocalDate date) {
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(NoSuchElementException::new);
 
+        return new DailyTaskDto(getTodayTasks(member, date));
+    }
+
+    public MonthlyTaskDto readMonthlyTasks(String memberEmail, LocalDate startDate, LocalDate endDate) {
+        List<DailyTaskDto> dailyTaskDtos = new ArrayList<>();
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        LocalDate date = startDate;
+        while (date.isBefore(endDate)) {
+            DailyTaskDto day = new DailyTaskDto(getTodayTasks(member, date));
+            dailyTaskDtos.add(day);
+            date = date.plusDays(1);
+        }
+
+        return new MonthlyTaskDto(dailyTaskDtos);
+    }
+
+    private List<TaskDto> getTodayTasks(Member member, LocalDate date) {
         List<Task> todayTasks = member.getTasks().stream()
                 .filter(task -> task.getDate().equals(date))
                 .toList();
 
+        List<TaskDto> taskDtos = new ArrayList<>();
         for (Task task : todayTasks) {
-            response.add(new TaskDto(
+            taskDtos.add(new TaskDto(
                     task.getCategory().getCategoryName(),
                     task.getCategory().getCategoryColor(),
                     task.getStartTime(),
@@ -90,6 +110,6 @@ public class TaskService {
             ));
         }
 
-        return response;
+        return taskDtos;
     }
 }
