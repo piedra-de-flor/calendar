@@ -54,6 +54,7 @@ public class TaskService {
         return savedTask.getId();
     }
 
+    @Transactional
     public boolean deleteTask(String memberEmail, long taskId) {
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(NoSuchElementException::new);
@@ -130,6 +131,7 @@ public class TaskService {
         return taskDtos;
     }
 
+    @Transactional
     public long updateTask(String memberEmail, TaskUpdateDto updateDto) {
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(NoSuchElementException::new);
@@ -145,6 +147,7 @@ public class TaskService {
         throw new IllegalArgumentException("you don't have auth to update this task");
     }
 
+    @Transactional
     public long updateTaskCategory(String memberEmail, TaskCategoryUpdateDto updateDto) {
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(NoSuchElementException::new);
