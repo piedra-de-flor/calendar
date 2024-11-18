@@ -2,6 +2,7 @@ package com.example.calendar.domain.entity.schedule;
 
 import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.vo.schedule.CategoryInfo;
+import com.example.calendar.dto.schedule.category.CategoryUpdateDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -34,5 +35,9 @@ public class Category {
 
     public String getCategoryColor() {
         return categoryInfo.getColor();
+    }
+
+    public void update(CategoryUpdateDto updateDto) {
+        this.categoryInfo.update(updateDto.name(), updateDto.color());
     }
 }

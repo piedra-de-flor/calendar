@@ -1,7 +1,7 @@
 package com.example.calendar.controller.schedule;
 
 import com.example.calendar.dto.schedule.category.CategoryCreateDto;
-import com.example.calendar.dto.schedule.task.TaskCreateDto;
+import com.example.calendar.dto.schedule.category.CategoryUpdateDto;
 import com.example.calendar.service.schedule.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +29,15 @@ public class CategoryController {
         String memberEmail = authentication.getName();
 
         boolean response = categoryService.deleteCategory(memberEmail, categoryId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/schedule/category")
+    public ResponseEntity<Boolean> updateCategory(@RequestBody CategoryUpdateDto updateDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        boolean response = categoryService.updateCategory(memberEmail, updateDto);
         return ResponseEntity.ok(response);
     }
 }

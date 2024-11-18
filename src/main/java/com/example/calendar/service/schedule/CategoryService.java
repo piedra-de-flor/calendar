@@ -5,6 +5,7 @@ import com.example.calendar.domain.entity.schedule.Category;
 import com.example.calendar.domain.vo.schedule.CategoryInfo;
 import com.example.calendar.domain.vo.schedule.Color;
 import com.example.calendar.dto.schedule.category.CategoryCreateDto;
+import com.example.calendar.dto.schedule.category.CategoryUpdateDto;
 import com.example.calendar.repository.CategoryRepository;
 import com.example.calendar.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,5 +57,21 @@ public class CategoryService {
         }
 
         throw new IllegalArgumentException("you don't have auth to delete this category");
+    }
+
+    @Transactional
+    public boolean updateCategory(String memberEmail, CategoryUpdateDto updateDto) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        Category category = categoryRepository.findById(updateDto.categoryId())
+                .orElseThrow(NoSuchElementException::new);
+
+        if (member.getId() == category.getMember().getId()) {
+            category.update(updateDto);
+            return true;
+        }
+
+        throw new IllegalArgumentException("you don't have auth to update this category");
     }
 }
