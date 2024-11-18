@@ -50,4 +50,19 @@ public class TaskService {
 
         return savedTask.getId();
     }
+
+    public boolean deleteTask(String memberEmail, long taskId) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        Task target = taskRepository.findById(taskId)
+                .orElseThrow(NoSuchElementException::new);
+
+        if (target.getMember().getId() == member.getId()) {
+            taskRepository.delete(target);
+            return true;
+        }
+
+        throw new IllegalArgumentException("you don't have auth to delete task");
+    }
 }
