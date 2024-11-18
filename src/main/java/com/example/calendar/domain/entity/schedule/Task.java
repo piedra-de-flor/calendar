@@ -1,6 +1,7 @@
 package com.example.calendar.domain.entity.schedule;
 
 import com.example.calendar.domain.entity.member.Member;
+import com.example.calendar.dto.schedule.TaskUpdateDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -39,5 +40,27 @@ public class Task {
         this.startTime = startTime;
         this.endTime = endTime;
         this.description = description;
+    }
+
+    public void update(TaskUpdateDto updateDto) {
+        if (updateDto.date() != null) {
+            this.date = updateDto.date();
+        }
+
+        if (updateDto.startTime() != null) {
+            this.startTime = updateDto.startTime();
+        }
+
+        if (updateDto.endTime() != null) {
+            this.endTime = updateDto.endTime();
+        }
+
+        if (updateDto.description() != null) {
+            this.description = updateDto.description();
+        }
+    }
+
+    public void updateCategory(Category category) {
+        this.category = category;
     }
 }

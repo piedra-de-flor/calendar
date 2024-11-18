@@ -1,9 +1,6 @@
 package com.example.calendar.controller.schedule;
 
-import com.example.calendar.dto.schedule.DailyTaskDto;
-import com.example.calendar.dto.schedule.MonthlyTaskDto;
-import com.example.calendar.dto.schedule.TaskCreateDto;
-import com.example.calendar.dto.schedule.TaskDto;
+import com.example.calendar.dto.schedule.*;
 import com.example.calendar.service.schedule.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +57,24 @@ public class TaskController {
         String memberEmail = authentication.getName();
 
         TaskDto response = taskService.readTask(memberEmail, taskId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/schedule/task")
+    public ResponseEntity<Long> updateTask(@RequestBody TaskUpdateDto updateDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        long response = taskService.updateTask(memberEmail, updateDto);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/schedule/task/category")
+    public ResponseEntity<Long> updateTaskCategory(@RequestBody TaskCategoryUpdateDto updateDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        long response = taskService.updateTaskCategory(memberEmail, updateDto);
         return ResponseEntity.ok(response);
     }
 }

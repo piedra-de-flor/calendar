@@ -3,10 +3,7 @@ package com.example.calendar.service.schedule;
 import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.entity.schedule.Category;
 import com.example.calendar.domain.entity.schedule.Task;
-import com.example.calendar.dto.schedule.DailyTaskDto;
-import com.example.calendar.dto.schedule.MonthlyTaskDto;
-import com.example.calendar.dto.schedule.TaskCreateDto;
-import com.example.calendar.dto.schedule.TaskDto;
+import com.example.calendar.dto.schedule.*;
 import com.example.calendar.repository.CategoryRepository;
 import com.example.calendar.repository.MemberRepository;
 import com.example.calendar.repository.TaskRepository;
@@ -131,5 +128,38 @@ public class TaskService {
         }
 
         return taskDtos;
+    }
+
+    public long updateTask(String memberEmail, TaskUpdateDto updateDto) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        Task task = taskRepository.findById(updateDto.taskId())
+                .orElseThrow(NoSuchElementException::new);
+
+        if (member.getId() == task.getMember().getId()) {
+            task.update(updateDto);
+            return task.getId();
+        }
+
+        throw new IllegalArgumentException("you don't have auth to update this task");
+    }
+
+    public long updateTaskCategory(String memberEmail, TaskCategoryUpdateDto updateDto) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        Task task = taskRepository.findById(updateDto.taskId())
+                .orElseThrow(NoSuchElementException::new);
+
+        Category category = categoryRepository.findById(updateDto.categoryId())
+                .orElseThrow(NoSuchElementException::new);
+
+        if (member.getId() == task.getMember().getId()) {
+            task.updateCategory(category);
+            return task.getId();
+        }
+
+        throw new IllegalArgumentException("you don't have auth to update this task");
     }
 }
