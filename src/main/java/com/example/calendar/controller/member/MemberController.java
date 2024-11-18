@@ -1,9 +1,6 @@
 package com.example.calendar.controller.member;
 
-import com.example.calendar.dto.member.JwtToken;
-import com.example.calendar.dto.member.MemberUpdateDto;
-import com.example.calendar.dto.member.SignInDto;
-import com.example.calendar.dto.member.SignUpDto;
+import com.example.calendar.dto.member.*;
 import com.example.calendar.service.member.MemberFacadeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +24,15 @@ public class MemberController {
     public ResponseEntity<JwtToken> signIn(@RequestBody SignInDto signInDto) {
         JwtToken token = service.signIn(signInDto);
         return ResponseEntity.ok(token);
+    }
+
+    @GetMapping("/member")
+    public ResponseEntity<MemberDto> readMember() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        MemberDto response = service.read(memberEmail);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/sign-up/valid/name")

@@ -1,9 +1,6 @@
 package com.example.calendar.service.member;
 
-import com.example.calendar.dto.member.JwtToken;
-import com.example.calendar.dto.member.MemberUpdateDto;
-import com.example.calendar.dto.member.SignInDto;
-import com.example.calendar.dto.member.SignUpDto;
+import com.example.calendar.dto.member.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +17,10 @@ public class MemberFacadeService {
 
     public JwtToken signIn(SignInDto signInDto) {
         return signInService.signIn(signInDto.email(), signInDto.password());
+    }
+
+    public MemberDto read(String memberEmail) {
+        return memberService.readMemberInfo(memberEmail);
     }
 
     public boolean canName(String name) {
