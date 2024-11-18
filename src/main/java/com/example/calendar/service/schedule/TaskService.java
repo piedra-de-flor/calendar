@@ -4,6 +4,7 @@ import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.entity.schedule.Category;
 import com.example.calendar.domain.entity.schedule.Task;
 import com.example.calendar.dto.schedule.TaskCreateDto;
+import com.example.calendar.dto.schedule.TaskDto;
 import com.example.calendar.repository.CategoryRepository;
 import com.example.calendar.repository.MemberRepository;
 import com.example.calendar.repository.TaskRepository;
@@ -11,8 +12,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -64,5 +69,27 @@ public class TaskService {
         }
 
         throw new IllegalArgumentException("you don't have auth to delete task");
+    }
+
+    public List<TaskDto> readTask(String memberEmail, LocalDate date) {
+        List<TaskDto> response = new ArrayList<>();
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        List<Task> todayTasks = member.getTasks().stream()
+                .filter(task -> task.getDate().equals(date))
+                .toList();
+
+        for (Task task : todayTasks) {
+            response.add(new TaskDto(
+                    task.getCategory().getCategoryName(),
+                    task.getCategory().getCategoryColor(),
+                    task.getStartTime(),
+                    task.getEndTime(),
+                    task.getDescription()
+            ));
+        }
+
+        return response;
     }
 }

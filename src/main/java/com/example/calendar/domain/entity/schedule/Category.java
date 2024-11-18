@@ -27,4 +27,12 @@ public class Category {
         this.member = member;
         this.categoryInfo = categoryInfo;
     }
+
+    public String getCategoryName() {
+        return categoryInfo.getName();
+    }
+
+    public String getCategoryColor() {
+        return categoryInfo.getColor();
+    }
 }
