@@ -2,6 +2,7 @@ package com.example.calendar.domain.entity.member;
 
 import com.example.calendar.domain.entity.group.Teaming;
 import com.example.calendar.domain.entity.invitation.Invitation;
+import com.example.calendar.domain.entity.schedule.Task;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,6 +41,9 @@ public class Member {
     @OneToMany(mappedBy = "sender")
     private List<Invitation> sentInvitations = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member")
+    private List<Task> tasks = new ArrayList<>();
+
     @Builder
     public Member(String name, String email, String password, String provider, String providerId) {
         this.name = name;
@@ -74,6 +78,10 @@ public class Member {
 
     public void exitTeam(Teaming teaming) {
         this.teamings.remove(teaming);
+    }
+
+    public void addTask(Task task) {
+        this.tasks.add(task);
     }
 
     public void addInvitation(Invitation invitation) {
