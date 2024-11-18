@@ -51,6 +51,7 @@ public class CategoryService {
 
         if (member.getId() == target.getMember().getId()) {
             categoryRepository.delete(target);
+            member.deleteCategory(target);
             return true;
         }
 

@@ -64,6 +64,7 @@ public class TaskService {
 
         if (target.getMember().getId() == member.getId()) {
             taskRepository.delete(target);
+            member.deleteTask(target);
             return true;
         }
 

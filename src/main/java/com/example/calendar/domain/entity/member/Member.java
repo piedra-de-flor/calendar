@@ -88,8 +88,16 @@ public class Member {
         this.tasks.add(task);
     }
 
+    public void deleteTask(Task task) {
+        this.tasks.remove(task);
+    }
+
     public void addCategory(Category category) {
         this.categories.add(category);
+    }
+
+    public void deleteCategory(Category category) {
+        this.categories.remove(category);
     }
 
     public void addInvitation(Invitation invitation) {
