@@ -1,6 +1,7 @@
 package com.example.calendar.controller.schedule;
 
 import com.example.calendar.dto.schedule.category.CategoryCreateDto;
+import com.example.calendar.dto.schedule.category.CategoryDto;
 import com.example.calendar.dto.schedule.category.CategoryUpdateDto;
 import com.example.calendar.service.schedule.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -38,6 +41,15 @@ public class CategoryController {
         String memberEmail = authentication.getName();
 
         boolean response = categoryService.updateCategory(memberEmail, updateDto);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/schedule/category")
+    public ResponseEntity<List<CategoryDto>> readAllCategory() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        List<CategoryDto> response = categoryService.readAllCategory(memberEmail);
         return ResponseEntity.ok(response);
     }
 }
