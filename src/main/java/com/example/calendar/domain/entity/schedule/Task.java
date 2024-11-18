@@ -1,7 +1,7 @@
 package com.example.calendar.domain.entity.schedule;
 
 import com.example.calendar.domain.entity.member.Member;
-import com.example.calendar.dto.schedule.TaskUpdateDto;
+import com.example.calendar.dto.schedule.task.TaskUpdateDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

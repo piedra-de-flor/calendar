@@ -12,5 +12,5 @@ public enum Color {
     YELLOW("#FFFF00"),
     SKYBLUE("#CCEEFF");
 
-    private final String color;
+    private final String code;
 }

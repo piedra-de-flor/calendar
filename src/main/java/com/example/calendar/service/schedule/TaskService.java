@@ -3,7 +3,7 @@ package com.example.calendar.service.schedule;
 import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.entity.schedule.Category;
 import com.example.calendar.domain.entity.schedule.Task;
-import com.example.calendar.dto.schedule.*;
+import com.example.calendar.dto.schedule.task.*;
 import com.example.calendar.repository.CategoryRepository;
 import com.example.calendar.repository.MemberRepository;
 import com.example.calendar.repository.TaskRepository;

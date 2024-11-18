@@ -1,4 +1,4 @@
-package com.example.calendar.dto.schedule;
+package com.example.calendar.dto.schedule.task;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
