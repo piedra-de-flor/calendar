@@ -40,4 +40,20 @@ public class CategoryService {
         member.addCategory(category);
         return true;
     }
+
+    @Transactional
+    public boolean deleteCategory(String memberEmail, long categoryId) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        Category target = categoryRepository.findById(categoryId)
+                .orElseThrow(NoSuchElementException::new);
+
+        if (member.getId() == target.getMember().getId()) {
+            categoryRepository.delete(target);
+            return true;
+        }
+
+        throw new IllegalArgumentException("you don't have auth to delete this category");
+    }
 }

@@ -7,9 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,6 +20,15 @@ public class CategoryController {
         String memberEmail = authentication.getName();
 
         boolean response = categoryService.createCategory(memberEmail, createDto);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/schedule/category")
+    public ResponseEntity<Boolean> deleteCategory(@RequestParam long categoryId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        boolean response = categoryService.deleteCategory(memberEmail, categoryId);
         return ResponseEntity.ok(response);
     }
 }
