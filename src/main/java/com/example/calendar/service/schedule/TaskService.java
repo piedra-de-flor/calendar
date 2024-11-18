@@ -94,6 +94,26 @@ public class TaskService {
         return new MonthlyTaskDto(dailyTaskDtos);
     }
 
+    public TaskDto readTask(String memberEmail, long taskId) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(NoSuchElementException::new);
+
+        if (member.getId() == task.getMember().getId()) {
+            return new TaskDto(
+                    task.getCategory().getCategoryName(),
+                    task.getCategory().getCategoryColor(),
+                    task.getStartTime(),
+                    task.getEndTime(),
+                    task.getDescription()
+            );
+        }
+
+        throw new IllegalArgumentException("you don't have auth to read this task");
+    }
+
     private List<TaskDto> getTodayTasks(Member member, LocalDate date) {
         List<Task> todayTasks = member.getTasks().stream()
                 .filter(task -> task.getDate().equals(date))

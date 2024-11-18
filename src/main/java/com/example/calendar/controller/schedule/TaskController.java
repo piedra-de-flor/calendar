@@ -3,6 +3,7 @@ package com.example.calendar.controller.schedule;
 import com.example.calendar.dto.schedule.DailyTaskDto;
 import com.example.calendar.dto.schedule.MonthlyTaskDto;
 import com.example.calendar.dto.schedule.TaskCreateDto;
+import com.example.calendar.dto.schedule.TaskDto;
 import com.example.calendar.service.schedule.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,15 @@ public class TaskController {
         String memberEmail = authentication.getName();
 
         MonthlyTaskDto response = taskService.readMonthlyTasks(memberEmail, startDate, endDate);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/schedule/task")
+    public ResponseEntity<TaskDto> readDayTask(@RequestParam long taskId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        TaskDto response = taskService.readTask(memberEmail, taskId);
         return ResponseEntity.ok(response);
     }
 }
