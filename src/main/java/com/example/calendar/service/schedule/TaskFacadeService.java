@@ -1,8 +1,10 @@
 package com.example.calendar.service.schedule;
 
 import com.example.calendar.domain.vo.schedule.EmptyCategoryId;
+import com.example.calendar.dto.schedule.google.GoogleTaskCreateDto;
 import com.example.calendar.dto.schedule.task.TaskCreateDto;
 import com.example.calendar.service.schedule.google.CalendarService;
+import com.example.calendar.service.schedule.google.GoogleTaskService;
 import com.example.calendar.service.schedule.task.TaskService;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
@@ -23,7 +25,7 @@ import java.util.List;
 @Service
 public class TaskFacadeService {
     private final CalendarService calendarService;
-    private final TaskService taskService;
+    private final GoogleTaskService googleTaskService;
 
     public boolean mapEventsToTasks(String memberEmail, LocalDate benchmarkDate) throws GeneralSecurityException, IOException {
         List<Event> events = calendarService.getUpcomingEventsForCurrentMonth(memberEmail, benchmarkDate);
@@ -49,15 +51,16 @@ public class TaskFacadeService {
                     .atZone(ZoneId.of("Asia/Seoul"))
                     .toLocalTime();
 
-            TaskCreateDto createDto = new TaskCreateDto(
+            GoogleTaskCreateDto createDto = new GoogleTaskCreateDto(
                     EmptyCategoryId.EMPTY_CATEGORY_ID.getValue(),
                     date,
                     startTime,
                     endTime,
-                    event.getSummary()
+                    event.getSummary(),
+                    event.getId()
             );
 
-            taskService.createTask(memberEmail, createDto);
+            googleTaskService.createGoogleTask(memberEmail, createDto);
         }
 
         return true;
