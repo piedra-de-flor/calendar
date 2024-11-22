@@ -17,6 +17,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Embedded
     private CategoryInfo categoryInfo;
 
     @ManyToOne
