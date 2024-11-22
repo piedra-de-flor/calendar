@@ -6,29 +6,26 @@ import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class CalendarService {
 
-    private static final String APPLICATION_NAME = "Google Calendar API Spring Boot Example";
+    private static final String APPLICATION_NAME = "Google Calendar API";
 
     private final GoogleAuthorizationService googleAuthorizationService;
 
-    @Autowired
-    public CalendarService(GoogleAuthorizationService googleAuthorizationService) {
-        this.googleAuthorizationService = googleAuthorizationService;
-    }
-
-    /**
-     * Retrieve upcoming events for a specific user by email.
-     */
-    public List<Event> getUpcomingEvents(String email) throws IOException, GeneralSecurityException {
+    public List<Event> getUpcomingEventsForCurrentMonth(String email) throws IOException, GeneralSecurityException {
         Calendar service = new Calendar.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 GsonFactory.getDefaultInstance(),
@@ -36,12 +33,23 @@ public class CalendarService {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
-        DateTime now = new DateTime(System.currentTimeMillis());
+
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간대 사용
+        ZonedDateTime startOfMonth = now.withDayOfMonth(1).toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
+        ZonedDateTime endOfMonth = now.withDayOfMonth(now.toLocalDate().lengthOfMonth()).toLocalDate().atTime(23, 59, 59).atZone(ZoneId.of("Asia/Seoul"));
+
+        DateTime timeMin = new DateTime(startOfMonth.toInstant().toEpochMilli());
+        DateTime timeMax = new DateTime(endOfMonth.toInstant().toEpochMilli());
+        log.info("Fetching events from {} to {}", timeMin, timeMax);
+
+        // Google Calendar API 호출
         Events events = service.events().list("primary")
-                .setMaxResults(10)
-                .setTimeMin(now)
+                .setMaxResults(500)
+                .setTimeMin(timeMin)
+                .setTimeMax(timeMax)
                 .setOrderBy("startTime")
                 .setSingleEvents(true)
+                .setTimeZone("Asia/Seoul")
                 .execute();
 
         return events.getItems();

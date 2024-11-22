@@ -35,6 +35,12 @@ public class GoogleAuthorizationService {
     @Value("#{'${google.scopes}'.split(',')}")
     private List<String> scopes;
 
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    private String clientId;
+
+    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
+    private String clientSecret;
+
     /**
      * Retrieve Credential for the given email.
      * If no Credential exists, initiate the OAuth2 flow and save the new Credential.
@@ -50,28 +56,26 @@ public class GoogleAuthorizationService {
 
         NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
-        // 이메일 기반 DataStoreFactory 생성
         FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(
                 new java.io.File(TOKENS_DIRECTORY_PATH + "/" + sanitizeEmail(email))
         );
 
-        // GoogleAuthorizationCodeFlow 생성
+        Credential credential = getStoredCredential(dataStoreFactory, email);
+        if (credential != null) {
+            return credential; // Access Token 갱신된 Credential 반환
+        }
+
+        // Credential이 없으면 OAuth2 플로우 실행
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 httpTransport, JSON_FACTORY, clientSecrets, scopes)
                 .setDataStoreFactory(dataStoreFactory)
                 .setAccessType("offline")
                 .build();
 
-        // 기존 Credential이 존재하는지 확인
-        Credential credential = getStoredCredential(dataStoreFactory, email);
-        if (credential != null) {
-            return credential; // 기존 Credential 반환
-        }
-
-        // Credential이 없으면 OAuth2 플로우 실행
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
+
 
     /**
      * 이메일 기반으로 디렉터리 이름을 생성.
@@ -88,17 +92,22 @@ public class GoogleAuthorizationService {
         StoredCredential storedCredential = dataStore.get("user");
 
         if (storedCredential != null) {
-            return new Credential.Builder(BearerToken.authorizationHeaderAccessMethod())
+            Credential credential = new Credential.Builder(BearerToken.authorizationHeaderAccessMethod())
                     .setTransport(GoogleNetHttpTransport.newTrustedTransport())
                     .setJsonFactory(JSON_FACTORY)
-                    .setClientAuthentication(new ClientParametersAuthentication("YOUR_CLIENT_ID", "YOUR_CLIENT_SECRET"))
+                    .setClientAuthentication(new ClientParametersAuthentication(clientId, clientSecret))
                     .setTokenServerUrl(new GenericUrl("https://oauth2.googleapis.com/token"))
                     .build()
                     .setAccessToken(storedCredential.getAccessToken())
                     .setRefreshToken(storedCredential.getRefreshToken());
-        }
-        return null; // 저장된 Credential이 없으면 null 반환
-    }
 
+            if (credential.getAccessToken() == null || credential.getExpiresInSeconds() != null && credential.getExpiresInSeconds() <= 0) {
+                credential.refreshToken();
+            }
+
+            return credential;
+        }
+        return null;
+    }
 }
 
