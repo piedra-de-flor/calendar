@@ -1,4 +1,4 @@
-package com.example.calendar.service.schedule;
+package com.example.calendar.service.schedule.task;
 
 import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.entity.schedule.Category;

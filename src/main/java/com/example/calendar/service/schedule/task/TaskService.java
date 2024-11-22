@@ -1,4 +1,4 @@
-package com.example.calendar.service.schedule;
+package com.example.calendar.service.schedule.task;
 
 import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.entity.schedule.Category;
@@ -28,13 +28,6 @@ public class TaskService {
     public long createTask(String memberEmail, TaskCreateDto taskCreateDto) {
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(NoSuchElementException::new);
-
-        Optional<Task> oldTask = member.getTasks().stream()
-                .filter(task -> task.getStartTime().isBefore(taskCreateDto.endTime()) ||
-                        task.getEndTime().isAfter(taskCreateDto.startTime()))
-                .findFirst();
-
-        oldTask.ifPresent(taskRepository::delete);
 
         Category category = categoryRepository.findById(taskCreateDto.categoryId())
                 .orElseThrow(NoSuchElementException::new);

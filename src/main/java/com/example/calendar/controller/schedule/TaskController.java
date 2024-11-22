@@ -1,7 +1,7 @@
 package com.example.calendar.controller.schedule;
 
 import com.example.calendar.dto.schedule.task.*;
-import com.example.calendar.service.schedule.TaskService;
+import com.example.calendar.service.schedule.task.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

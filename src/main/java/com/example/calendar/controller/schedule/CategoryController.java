@@ -3,7 +3,7 @@ package com.example.calendar.controller.schedule;
 import com.example.calendar.dto.schedule.category.CategoryCreateDto;
 import com.example.calendar.dto.schedule.category.CategoryDto;
 import com.example.calendar.dto.schedule.category.CategoryUpdateDto;
-import com.example.calendar.service.schedule.CategoryService;
+import com.example.calendar.service.schedule.task.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

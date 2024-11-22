@@ -1,4 +1,4 @@
-package com.example.calendar.service.google;
+package com.example.calendar.service.schedule.google;
 
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
@@ -41,19 +41,13 @@ public class GoogleAuthorizationService {
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     private String clientSecret;
 
-    /**
-     * Retrieve Credential for the given email.
-     * If no Credential exists, initiate the OAuth2 flow and save the new Credential.
-     */
     public Credential getCredentials(String email) throws IOException, GeneralSecurityException {
         InputStream in = new FileInputStream(credentialsFilePath);
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + credentialsFilePath);
         }
 
-        GoogleClientSecrets clientSecrets =
-                GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
         NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
         FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(
@@ -62,10 +56,9 @@ public class GoogleAuthorizationService {
 
         Credential credential = getStoredCredential(dataStoreFactory, email);
         if (credential != null) {
-            return credential; // Access Token 갱신된 Credential 반환
+            return credential;
         }
 
-        // Credential이 없으면 OAuth2 플로우 실행
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 httpTransport, JSON_FACTORY, clientSecrets, scopes)
                 .setDataStoreFactory(dataStoreFactory)
@@ -73,23 +66,16 @@ public class GoogleAuthorizationService {
                 .build();
 
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+        return new AuthorizationCodeInstalledApp(flow, receiver).authorize(email);
     }
 
-
-    /**
-     * 이메일 기반으로 디렉터리 이름을 생성.
-     */
     private String sanitizeEmail(String email) {
         return email.replaceAll("@", "_at_").replaceAll("\\.", "_dot_");
     }
 
-    /**
-     * 기존에 저장된 Credential이 있는지 확인.
-     */
     private Credential getStoredCredential(DataStoreFactory dataStoreFactory, String email) throws IOException, GeneralSecurityException {
         DataStore<StoredCredential> dataStore = StoredCredential.getDefaultDataStore(dataStoreFactory);
-        StoredCredential storedCredential = dataStore.get("user");
+        StoredCredential storedCredential = dataStore.get(email);
 
         if (storedCredential != null) {
             Credential credential = new Credential.Builder(BearerToken.authorizationHeaderAccessMethod())

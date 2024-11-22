@@ -1,4 +1,4 @@
-package com.example.calendar.service.google;
+package com.example.calendar.service.schedule.google;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -25,7 +26,7 @@ public class CalendarService {
 
     private final GoogleAuthorizationService googleAuthorizationService;
 
-    public List<Event> getUpcomingEventsForCurrentMonth(String email) throws IOException, GeneralSecurityException {
+    public List<Event> getUpcomingEventsForCurrentMonth(String email, LocalDate date) throws IOException, GeneralSecurityException {
         Calendar service = new Calendar.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 GsonFactory.getDefaultInstance(),
@@ -33,16 +34,13 @@ public class CalendarService {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
-
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간대 사용
-        ZonedDateTime startOfMonth = now.withDayOfMonth(1).toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
-        ZonedDateTime endOfMonth = now.withDayOfMonth(now.toLocalDate().lengthOfMonth()).toLocalDate().atTime(23, 59, 59).atZone(ZoneId.of("Asia/Seoul"));
+        ZonedDateTime startOfMonth = date.withDayOfMonth(1).atStartOfDay(ZoneId.of("Asia/Seoul"));
+        ZonedDateTime endOfMonth = date.withDayOfMonth(date.lengthOfMonth()).atTime(23, 59, 59).atZone(ZoneId.of("Asia/Seoul"));
 
         DateTime timeMin = new DateTime(startOfMonth.toInstant().toEpochMilli());
         DateTime timeMax = new DateTime(endOfMonth.toInstant().toEpochMilli());
         log.info("Fetching events from {} to {}", timeMin, timeMax);
 
-        // Google Calendar API 호출
         Events events = service.events().list("primary")
                 .setMaxResults(500)
                 .setTimeMin(timeMin)
