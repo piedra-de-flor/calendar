@@ -1,6 +1,7 @@
 package com.example.calendar.configuration;
 
 import com.example.calendar.service.member.CustomOauth2MemberDetailsService;
+import com.example.calendar.support.GoogleJwtFilter;
 import com.example.calendar.support.JwtAuthFilter;
 import com.example.calendar.support.JwtTokenProvider;
 import com.example.calendar.support.OAuth2AuthenticationSuccessHandler;
@@ -22,8 +23,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final JwtTokenProvider jwtTokenProvider;
-    private final CustomOauth2MemberDetailsService customOauth2MemberDetailsService;
+    private final JwtTokenProvider jwtTokenProvider;  private final CustomOauth2MemberDetailsService customOauth2MemberDetailsService;
     private final OAuth2AuthenticationSuccessHandler successHandler;
 
     @Bean
@@ -41,8 +41,10 @@ public class SecurityConfig {
                         .successHandler(successHandler)
                 )
                 .addFilterBefore(new JwtAuthFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new GoogleJwtFilter(jwtTokenProvider, "/calendar/tasks/month"), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
