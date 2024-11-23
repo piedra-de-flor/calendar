@@ -14,4 +14,8 @@ public class NotificationContentService {
     public String inviteTeam(Member sender, Team team) {
         return sender.getName() + NotificationContents.SENDER + team.getName() + NotificationContents.TEAM_INVITATION;
     }
+
+    public String acceptInvitation(Member receiver) {
+        return receiver.getName() + NotificationContents.SENDER + NotificationContents.ACCEPT_INVITATION;
+    }
 }

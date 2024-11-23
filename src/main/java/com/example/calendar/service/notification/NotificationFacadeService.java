@@ -49,4 +49,8 @@ public class NotificationFacadeService {
     public String inviteTeam(Member sender, Team team) {
         return contentService.inviteTeam(sender, team);
     }
+
+    public String acceptInvitation(Member receiver) {
+        return contentService.acceptInvitation(receiver);
+    }
 }

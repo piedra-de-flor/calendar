@@ -83,7 +83,7 @@ public class InvitationFacadeService {
         Invitation invitation = invitationService.readInvitation(invitationId);
 
         invitation.accept();
-
+        notificationService.send(invitation.getSender(), NotificationType.INVITATION, notificationService.acceptInvitation(invitation.getReceiver()), NotificationRedirectUrl.INVITATION_TEAM.getUrl());
         if (invitation.getClass() == TeamInvitation.class) {
             teamingRepository.save(((TeamInvitation) invitation).getTeaming());
         }
