@@ -2,23 +2,14 @@ package com.example.calendar.service.notification;
 
 import com.example.calendar.domain.entity.group.Team;
 import com.example.calendar.domain.entity.member.Member;
-import com.example.calendar.domain.entity.notification.Notification;
-import com.example.calendar.domain.vo.notification.NotificationContents;
+import com.example.calendar.domain.entity.vote.Vote;
 import com.example.calendar.domain.vo.notification.NotificationType;
 import com.example.calendar.dto.notification.NotificationDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -42,12 +33,20 @@ public class NotificationFacadeService {
         notificationService.markAsRead(email, notificationId);
     }
 
-    public String inviteFriend(Member sender) {
+    public String inviteFriendMessage(Member sender) {
         return contentService.makeFriendInvitationContent(sender);
     }
 
-    public String inviteTeam(Member sender, Team team) {
+    public String inviteTeamMessage(Member sender, Team team) {
         return contentService.inviteTeam(sender, team);
+    }
+
+    public String voteCreateMessage(Team team) {
+        return contentService.createVote(team);
+    }
+
+    public String voteCompleteMessage(Vote vote) {
+        return contentService.completeVote(vote);
     }
 
     public String acceptInvitation(Member receiver) {

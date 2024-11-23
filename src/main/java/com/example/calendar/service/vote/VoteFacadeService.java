@@ -1,13 +1,17 @@
 package com.example.calendar.service.vote;
 
 import com.example.calendar.domain.entity.group.Team;
+import com.example.calendar.domain.entity.group.Teaming;
 import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.entity.vote.Vote;
 import com.example.calendar.domain.entity.vote.VoteOption;
+import com.example.calendar.domain.vo.notification.NotificationRedirectUrl;
+import com.example.calendar.domain.vo.notification.NotificationType;
 import com.example.calendar.dto.member.MemberDto;
 import com.example.calendar.dto.vote.*;
 import com.example.calendar.repository.MemberRepository;
 import com.example.calendar.repository.TeamRepository;
+import com.example.calendar.service.notification.NotificationFacadeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +23,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Service
 public class VoteFacadeService {
+    private final NotificationFacadeService notificationFacadeService;
     private final VoteService voteService;
     private final VoteOptionService voteOptionService;
 
@@ -37,7 +42,13 @@ public class VoteFacadeService {
             throw new IllegalArgumentException("you don't have auth to create the vote about the team");
         }
 
-        return voteService.createVote(createDto, team, voteOptionService.createVoteOptions(createDto));
+        boolean response = voteService.createVote(createDto, team, voteOptionService.createVoteOptions(createDto));
+
+        for (Teaming teaming : team.getTeamings()) {
+            notificationFacadeService.send(teaming.getMember(), NotificationType.VOTE, notificationFacadeService.voteCreateMessage(team), NotificationRedirectUrl.VOTE_CREATED.getUrl());
+        }
+
+        return response;
     }
 
     public boolean castVote(String voterEmail, long voteId, CastVoteOptionsDto castVoteOptionsDto) {
@@ -118,6 +129,10 @@ public class VoteFacadeService {
         }
 
         voteService.closeVote(vote);
+
+        for (Teaming teaming : vote.getTeam().getTeamings()) {
+            notificationFacadeService.send(teaming.getMember(), NotificationType.VOTE, notificationFacadeService.voteCompleteMessage(vote), NotificationRedirectUrl.VOTE_COMPLETE.getUrl());
+        }
 
         return true;
     }

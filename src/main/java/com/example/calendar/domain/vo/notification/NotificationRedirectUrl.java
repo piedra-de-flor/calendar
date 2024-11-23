@@ -9,7 +9,7 @@ public enum NotificationRedirectUrl {
     INVITATION_FRIEND("-"),
     INVITATION_TEAM("-"),
     VOTE_CREATED("-"),
-    VOTE_END("-");
+    VOTE_COMPLETE("-");
 
     private final String url;
 }

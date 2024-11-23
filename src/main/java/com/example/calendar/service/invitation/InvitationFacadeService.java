@@ -15,7 +15,6 @@ import com.example.calendar.repository.TeamRepository;
 import com.example.calendar.repository.TeamingRepository;
 import com.example.calendar.repository.MemberRepository;
 import com.example.calendar.service.notification.NotificationFacadeService;
-import com.example.calendar.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +45,7 @@ public class InvitationFacadeService {
         Invitation friendInvitation = invitationService.createFriendInvitation(sender, receiver);
         receiver.addInvitation(friendInvitation);
 
-        notificationService.send(receiver, NotificationType.INVITATION, notificationService.inviteFriend(sender), NotificationRedirectUrl.INVITATION_FRIEND.getUrl());
+        notificationService.send(receiver, NotificationType.INVITATION, notificationService.inviteFriendMessage(sender), NotificationRedirectUrl.INVITATION_FRIEND.getUrl());
         return true;
     }
 
@@ -71,7 +70,7 @@ public class InvitationFacadeService {
             Invitation groupInvitation = invitationService.createTeamInvitation(sender, receiver, team, teaming);
             receiver.addInvitation(groupInvitation);
 
-            notificationService.send(receiver, NotificationType.INVITATION, notificationService.inviteTeam(sender, team), NotificationRedirectUrl.INVITATION_TEAM.getUrl());
+            notificationService.send(receiver, NotificationType.INVITATION, notificationService.inviteTeamMessage(sender, team), NotificationRedirectUrl.INVITATION_TEAM.getUrl());
             return true;
         }
 
