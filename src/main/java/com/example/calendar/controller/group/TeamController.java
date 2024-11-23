@@ -29,7 +29,10 @@ public class TeamController {
 
     @PostMapping("/team/friend")
     public ResponseEntity<FriendDto> addFriend(@RequestBody TeamAddFriendDto addFriendDto) {
-        FriendDto response = teamService.addFriend(addFriendDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        FriendDto response = teamService.addFriend(memberEmail, addFriendDto);
         return ResponseEntity.ok(response);
     }
 

@@ -3,6 +3,7 @@ package com.example.calendar.service.group;
 import com.example.calendar.domain.entity.group.Team;
 import com.example.calendar.domain.entity.group.Teaming;
 import com.example.calendar.domain.entity.member.Member;
+import com.example.calendar.dto.invitation.TeamInvitationDto;
 import com.example.calendar.dto.member.FriendDto;
 import com.example.calendar.dto.group.TeamAddFriendDto;
 import com.example.calendar.dto.group.TeamCreateDto;
@@ -10,6 +11,8 @@ import com.example.calendar.dto.group.TeamDto;
 import com.example.calendar.repository.TeamRepository;
 import com.example.calendar.repository.TeamingRepository;
 import com.example.calendar.repository.MemberRepository;
+import com.example.calendar.service.invitation.InvitationFacadeService;
+import com.example.calendar.service.invitation.InvitationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,6 +30,7 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final TeamingRepository teamingRepository;
     private final MemberRepository memberRepository;
+    private final InvitationFacadeService invitationFacadeService;
 
     @Transactional
     public boolean createTeam(String memberEmail, TeamCreateDto createDto) {
@@ -53,13 +57,7 @@ public class TeamService {
             Member friend = memberRepository.findById(friendId)
                     .orElseThrow(NoSuchElementException::new);
 
-            Teaming friendTeaming = Teaming.builder()
-                    .member(friend)
-                    .team(team)
-                    .build();
-
-            team.addTeaming(friendTeaming);
-            teamingRepository.save(friendTeaming);
+            invitationFacadeService.sendTeamInvitation(memberEmail, new TeamInvitationDto(friend.getEmail(), team.getId()));
         }
 
         teamRepository.save(team);
@@ -68,19 +66,20 @@ public class TeamService {
     }
 
     @Transactional
-    public FriendDto addFriend(TeamAddFriendDto addFriendDto) {
-        Member friend = memberRepository.findByEmail(addFriendDto.friendEmail())
+    public FriendDto addFriend(String memberEmail, TeamAddFriendDto addFriendDto) {
+        Member sender = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(NoSuchElementException::new);
 
         Team team = teamRepository.findById(addFriendDto.teamId())
                 .orElseThrow(NoSuchElementException::new);
 
-        Teaming teaming = Teaming.builder()
-                .member(friend)
-                .team(team)
-                .build();
+        Teaming teaming = teamingRepository.findByMemberAndTeam(sender, team)
+                .orElseThrow(() -> new NoSuchElementException("find teaming error, there is no teaming"));
 
-        teamingRepository.save(teaming);
+        Member friend = memberRepository.findByEmail(addFriendDto.friendEmail())
+                .orElseThrow(NoSuchElementException::new);
+
+        invitationFacadeService.sendTeamInvitation(memberEmail, new TeamInvitationDto(friend.getEmail(), team.getId()));
 
         return new FriendDto(friend.getId(), friend.getEmail(), friend.getName());
     }
