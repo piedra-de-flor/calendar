@@ -3,6 +3,7 @@ package com.example.calendar.support;
 import com.example.calendar.dto.member.JwtToken;
 import com.example.calendar.service.schedule.google.GoogleAuthorizationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.auth.oauth2.Credential;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,12 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         }
 
         try {
-            authorizationService.getCredentials(email);
+            Credential credential = authorizationService.getCredentials(email);
+
+            if (credential.getAccessToken() == null || (credential.getExpiresInSeconds() != null && credential.getExpiresInSeconds() <= 300)) {
+                credential.refreshToken();
+                log.info("Google Credential refreshed for email: {}", email);
+            }
         } catch (GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
