@@ -1,12 +1,8 @@
 package com.example.calendar.controller.notification;
 
-import com.example.calendar.domain.entity.member.Member;
-import com.example.calendar.domain.vo.notification.NotificationType;
 import com.example.calendar.dto.notification.NotificationDto;
-import com.example.calendar.repository.MemberRepository;
-import com.example.calendar.service.notification.NotificationService;
+import com.example.calendar.service.notification.NotificationFacadeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,13 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @RestController
 public class NotificationController {
-    private final NotificationService notificationService;
-    private final MemberRepository memberRepository;
+    private final NotificationFacadeService notificationService;
 
     @GetMapping(value = "/notification/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamNotifications(

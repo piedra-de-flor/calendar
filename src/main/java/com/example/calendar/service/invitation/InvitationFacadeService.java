@@ -6,12 +6,16 @@ import com.example.calendar.domain.entity.invitation.TeamInvitation;
 import com.example.calendar.domain.entity.invitation.Invitation;
 import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.vo.invitation.InvitationType;
+import com.example.calendar.domain.vo.notification.NotificationRedirectUrl;
+import com.example.calendar.domain.vo.notification.NotificationType;
 import com.example.calendar.dto.invitation.FriendInvitationDto;
 import com.example.calendar.dto.invitation.TeamInvitationDto;
 import com.example.calendar.dto.invitation.InvitationDto;
 import com.example.calendar.repository.TeamRepository;
 import com.example.calendar.repository.TeamingRepository;
 import com.example.calendar.repository.MemberRepository;
+import com.example.calendar.service.notification.NotificationFacadeService;
+import com.example.calendar.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +26,7 @@ import java.util.*;
 @Service
 public class InvitationFacadeService {
     private final InvitationService invitationService;
+    private final NotificationFacadeService notificationService;
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final TeamingRepository teamingRepository;
@@ -40,6 +45,8 @@ public class InvitationFacadeService {
 
         Invitation friendInvitation = invitationService.createFriendInvitation(sender, receiver);
         receiver.addInvitation(friendInvitation);
+
+        notificationService.send(receiver, NotificationType.INVITATION, notificationService.inviteFriend(sender), NotificationRedirectUrl.INVITATION_FRIEND.getUrl());
         return true;
     }
 
@@ -63,6 +70,8 @@ public class InvitationFacadeService {
             teamingRepository.save(teaming);
             Invitation groupInvitation = invitationService.createTeamInvitation(sender, receiver, team, teaming);
             receiver.addInvitation(groupInvitation);
+
+            notificationService.send(receiver, NotificationType.INVITATION, notificationService.inviteTeam(sender, team), NotificationRedirectUrl.INVITATION_TEAM.getUrl());
             return true;
         }
 
