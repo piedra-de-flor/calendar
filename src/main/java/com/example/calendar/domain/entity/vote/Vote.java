@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,6 +28,10 @@ public class Vote {
     @Enumerated(EnumType.STRING)
     private VoteStatus status = VoteStatus.OPEN;
 
+    private LocalDateTime createdAt;
+
+    private LocalDateTime closedAt;
+
     @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team;
@@ -38,6 +43,7 @@ public class Vote {
         this.description = description;
         this.isMultipleChoice = isMultipleChoice;
         this.options = options;
+        this.createdAt = LocalDateTime.now();
     }
 
     public boolean isOpen() {
@@ -49,5 +55,6 @@ public class Vote {
             throw new IllegalStateException("The vote is already closed.");
         }
         this.status = VoteStatus.CLOSED;
+        this.closedAt = LocalDateTime.now();
     }
 }

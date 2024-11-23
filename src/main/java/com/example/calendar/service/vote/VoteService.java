@@ -4,6 +4,7 @@ import com.example.calendar.domain.entity.group.Team;
 import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.entity.vote.Vote;
 import com.example.calendar.domain.entity.vote.VoteOption;
+import com.example.calendar.domain.vo.vote.VoteStatus;
 import com.example.calendar.dto.member.MemberDto;
 import com.example.calendar.dto.vote.*;
 import com.example.calendar.repository.MemberRepository;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -192,5 +194,30 @@ public class VoteService {
         voteRepository.save(vote);
 
         return true;
+    }
+
+    @Transactional
+    public void closeExpiredVotes() {
+        List<Vote> openVotes = voteRepository.findAllByStatus(VoteStatus.OPEN);
+
+        for (Vote vote : openVotes) {
+            if (vote.getCreatedAt().plusDays(3).isBefore(LocalDateTime.now())) {
+                vote.close();
+                voteRepository.save(vote);
+            }
+        }
+
+        voteRepository.saveAll(openVotes);
+    }
+
+    @Transactional
+    public void deleteExpiredVotes() {
+        List<Vote> expiredVotes = voteRepository.findAllByStatus(VoteStatus.CLOSED);
+
+        for (Vote vote : expiredVotes) {
+            if (vote.getClosedAt().plusDays(7).isBefore(LocalDateTime.now())) {
+                voteRepository.delete(vote);
+            }
+        }
     }
 }
