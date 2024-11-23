@@ -26,8 +26,8 @@ public class VoteService {
     public Vote createVote(VoteCreateDto createDto, Team team, List<VoteOption> options) {
         Vote vote = Vote.builder()
                 .team(team)
-                .title(createDto.VoteTitle())
-                .description(createDto.VoteDescription())
+                .title(createDto.voteTitle())
+                .description(createDto.voteDescription())
                 .isMultipleChoice(createDto.isMultipleVote())
                 .options(options)
                 .build();
@@ -58,7 +58,6 @@ public class VoteService {
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Invalid option ID"));
 
-            option.getVoters().add(voterEmail);
             option.castVote(voterEmail);
         });
 

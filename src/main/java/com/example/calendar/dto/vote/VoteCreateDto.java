@@ -4,8 +4,8 @@ import java.util.List;
 
 public record VoteCreateDto (
         long teamId,
-        String VoteTitle,
-        String VoteDescription,
+        String voteTitle,
+        String voteDescription,
         boolean isMultipleVote,
         List<String> voteOptions
 ) {

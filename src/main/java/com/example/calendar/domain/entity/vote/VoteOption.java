@@ -6,8 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -19,7 +19,7 @@ public class VoteOption {
     private String optionText;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> voters = new ArrayList<>();
+    private Set<String> voters = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "vote_id")
