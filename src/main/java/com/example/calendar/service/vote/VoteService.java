@@ -23,7 +23,7 @@ public class VoteService {
     private final VoteRepository voteRepository;
 
     @Transactional
-    public boolean createVote(VoteCreateDto createDto, Team team, List<VoteOption> options) {
+    public Vote createVote(VoteCreateDto createDto, Team team, List<VoteOption> options) {
         Vote vote = Vote.builder()
                 .team(team)
                 .title(createDto.VoteTitle())
@@ -32,8 +32,7 @@ public class VoteService {
                 .options(options)
                 .build();
 
-        voteRepository.save(vote);
-        return true;
+        return voteRepository.save(vote);
     }
 
     public Vote readVote(long voteId) {

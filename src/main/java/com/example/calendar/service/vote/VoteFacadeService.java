@@ -42,13 +42,18 @@ public class VoteFacadeService {
             throw new IllegalArgumentException("you don't have auth to create the vote about the team");
         }
 
-        boolean response = voteService.createVote(createDto, team, voteOptionService.createVoteOptions(createDto));
+        List<VoteOption> options = voteOptionService.createVoteOptions(createDto);
+        Vote vote = voteService.createVote(createDto, team, options);
+
+        for (VoteOption option : options) {
+            option.setVote(vote);
+        }
 
         for (Teaming teaming : team.getTeamings()) {
             notificationFacadeService.send(teaming.getMember(), NotificationType.VOTE, notificationFacadeService.voteCreateMessage(team), NotificationRedirectUrl.VOTE_CREATED.getUrl());
         }
 
-        return response;
+        return true;
     }
 
     public boolean castVote(String voterEmail, long voteId, CastVoteOptionsDto castVoteOptionsDto) {

@@ -21,8 +21,13 @@ public class VoteOption {
     @ElementCollection(fetch = FetchType.LAZY)
     private List<String> voters = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "vote_id")
+    private Vote vote;
+
     @Builder
-    public VoteOption(String optionText) {
+    public VoteOption(Vote vote, String optionText) {
+        this.vote = vote;
         this.optionText = optionText;
     }
 
@@ -32,5 +37,9 @@ public class VoteOption {
 
     public int getVoterNumber() {
         return voters.size();
+    }
+
+    public void setVote(Vote vote) {
+        this.vote = vote;
     }
 }
