@@ -3,6 +3,7 @@ package com.example.calendar.service.schedule.google;
 import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.entity.schedule.Category;
 import com.example.calendar.domain.entity.schedule.GoogleCalendarTask;
+import com.example.calendar.domain.entity.schedule.Task;
 import com.example.calendar.dto.schedule.google.GoogleTaskCreateDto;
 import com.example.calendar.repository.CategoryRepository;
 import com.example.calendar.repository.MemberRepository;
@@ -48,15 +49,14 @@ public class GoogleTaskService {
             member.deleteTask(currentTask);
         }
 
-        GoogleCalendarTask newTask = GoogleCalendarTask.builder()
-                .member(member)
-                .category(category)
-                .date(taskCreateDto.date())
-                .startTime(taskCreateDto.startTime())
-                .endTime(taskCreateDto.endTime())
-                .description(taskCreateDto.description())
-                .eventId(taskCreateDto.eventId())
-                .build();
+        Task newTask = new GoogleCalendarTask(
+                member,
+                category,
+                taskCreateDto.date(),
+                taskCreateDto.startTime(),
+                taskCreateDto.endTime(),
+                taskCreateDto.description(),
+                taskCreateDto.eventId());
 
         taskRepository.save(newTask);
         member.addTask(newTask);

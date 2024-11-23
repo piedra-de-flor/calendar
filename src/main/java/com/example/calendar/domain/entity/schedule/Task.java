@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter
 @Entity
 public class Task {

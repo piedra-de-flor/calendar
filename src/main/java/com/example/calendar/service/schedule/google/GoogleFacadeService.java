@@ -1,11 +1,7 @@
-package com.example.calendar.service.schedule;
+package com.example.calendar.service.schedule.google;
 
 import com.example.calendar.domain.vo.schedule.EmptyCategoryId;
 import com.example.calendar.dto.schedule.google.GoogleTaskCreateDto;
-import com.example.calendar.dto.schedule.task.TaskCreateDto;
-import com.example.calendar.service.schedule.google.CalendarService;
-import com.example.calendar.service.schedule.google.GoogleTaskService;
-import com.example.calendar.service.schedule.task.TaskService;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class TaskFacadeService {
+public class GoogleFacadeService {
     private final CalendarService calendarService;
     private final GoogleTaskService googleTaskService;
 
