@@ -5,10 +5,7 @@ import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.entity.vote.Vote;
 import com.example.calendar.domain.entity.vote.VoteOption;
 import com.example.calendar.dto.member.MemberDto;
-import com.example.calendar.dto.vote.VoteCreateDto;
-import com.example.calendar.dto.vote.CastVoteOptionsDto;
-import com.example.calendar.dto.vote.VoteDto;
-import com.example.calendar.dto.vote.VoteOptionDto;
+import com.example.calendar.dto.vote.*;
 import com.example.calendar.repository.MemberRepository;
 import com.example.calendar.repository.TeamRepository;
 import com.example.calendar.repository.VoteOptionRepository;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -105,7 +103,7 @@ public class VoteService {
 
         for (VoteOption option : vote.getOptions()) {
             Map<Long, Integer> idAndVoteQuantity = new HashMap<>();
-            idAndVoteQuantity.put(option.getId(), option.getVoters().size());
+            idAndVoteQuantity.put(option.getId(), option.getVoterNumber());
 
             optionInfo.put(option.getOptionText(), idAndVoteQuantity);
         }
@@ -114,6 +112,7 @@ public class VoteService {
                 voteId,
                 vote.getTitle(),
                 vote.getDescription(),
+                vote.getStatus(),
                 optionInfo
         );
     }
@@ -147,5 +146,51 @@ public class VoteService {
         }
 
         return new VoteOptionDto(voteOption.getOptionText(), voters);
+    }
+
+    public VoteResultDto getVoteResults(String email, long voteId) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(NoSuchElementException::new);
+
+        Vote vote = voteRepository.findById(voteId)
+                .orElseThrow(NoSuchElementException::new);
+
+        if (member.getTeamings().stream()
+                .noneMatch(teaming -> teaming.getTeam().getId() == vote.getTeam().getId())) {
+            throw new IllegalArgumentException("you don't have auth to read result about the vote");
+        }
+
+        if (vote.isOpen()) {
+            throw new IllegalStateException("Vote is still open. Close it to see results.");
+        }
+
+        Map<Long, String> result = new HashMap<>();
+
+        VoteOption winner = vote.getOptions().stream()
+                .max(Comparator.comparingInt(VoteOption::getVoterNumber))
+                .orElseThrow(() -> new NoSuchElementException("No options available"));
+
+        result.put(winner.getId(), winner.getOptionText());
+
+        return new VoteResultDto(vote.getId(), result);
+    }
+
+    @Transactional
+    public boolean completeVote(String email, long voteId) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(NoSuchElementException::new);
+
+        Vote vote = voteRepository.findById(voteId)
+                .orElseThrow(NoSuchElementException::new);
+
+        if (member.getTeamings().stream()
+                .noneMatch(teaming -> teaming.getTeam().getId() == vote.getTeam().getId())) {
+            throw new IllegalArgumentException("you don't have auth to complete the vote about the team");
+        }
+
+        vote.close();
+        voteRepository.save(vote);
+
+        return true;
     }
 }

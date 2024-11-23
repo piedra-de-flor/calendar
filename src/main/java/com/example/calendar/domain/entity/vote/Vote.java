@@ -1,6 +1,7 @@
 package com.example.calendar.domain.entity.vote;
 
 import com.example.calendar.domain.entity.group.Team;
+import com.example.calendar.domain.vo.vote.VoteStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -23,6 +24,9 @@ public class Vote {
     @OneToMany(mappedBy = "vote", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VoteOption> options;
 
+    @Enumerated(EnumType.STRING)
+    private VoteStatus status = VoteStatus.OPEN;
+
     @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team;
@@ -34,5 +38,16 @@ public class Vote {
         this.description = description;
         this.isMultipleChoice = isMultipleChoice;
         this.options = options;
+    }
+
+    public boolean isOpen() {
+        return this.status == VoteStatus.OPEN;
+    }
+
+    public void close() {
+        if (this.status == VoteStatus.CLOSED) {
+            throw new IllegalStateException("The vote is already closed.");
+        }
+        this.status = VoteStatus.CLOSED;
     }
 }

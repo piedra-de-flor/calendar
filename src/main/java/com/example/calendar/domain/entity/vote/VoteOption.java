@@ -29,4 +29,8 @@ public class VoteOption {
     public void castVote(String email) {
         this.voters.add(email);
     }
+
+    public int getVoterNumber() {
+        return voters.size();
+    }
 }

@@ -69,7 +69,7 @@ public class TaskController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/schedule/task/category")
+    @PatchMapping("/schedule/task/category")
     public ResponseEntity<Long> updateTaskCategory(@RequestBody TaskCategoryUpdateDto updateDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();

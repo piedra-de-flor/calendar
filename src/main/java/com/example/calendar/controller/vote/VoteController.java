@@ -1,9 +1,6 @@
 package com.example.calendar.controller.vote;
 
-import com.example.calendar.dto.vote.VoteCreateDto;
-import com.example.calendar.dto.vote.CastVoteOptionsDto;
-import com.example.calendar.dto.vote.VoteDto;
-import com.example.calendar.dto.vote.VoteOptionDto;
+import com.example.calendar.dto.vote.*;
 import com.example.calendar.service.vote.VoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +46,24 @@ public class VoteController {
         String memberEmail = authentication.getName();
 
         VoteOptionDto response = voteService.readVoteOption(memberEmail, voteId, voteOptionId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/vote/status/{voteId}")
+    public ResponseEntity<Boolean> completeVote(@PathVariable long voteId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        boolean response = voteService.completeVote(memberEmail, voteId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/vote/result/{voteId}")
+    public ResponseEntity<VoteResultDto> readResultVote(@PathVariable long voteId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        VoteResultDto response = voteService.getVoteResults(memberEmail, voteId);
         return ResponseEntity.ok(response);
     }
 }
