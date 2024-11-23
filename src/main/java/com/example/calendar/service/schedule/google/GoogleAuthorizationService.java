@@ -87,7 +87,7 @@ public class GoogleAuthorizationService {
                     .setAccessToken(storedCredential.getAccessToken())
                     .setRefreshToken(storedCredential.getRefreshToken());
 
-            if (credential.getAccessToken() == null || credential.getExpiresInSeconds() != null && credential.getExpiresInSeconds() <= 0) {
+            if (credential.getAccessToken() == null || credential.getExpiresInSeconds() != null && credential.getExpiresInSeconds() <= 3600) {
                 credential.refreshToken();
             }
 

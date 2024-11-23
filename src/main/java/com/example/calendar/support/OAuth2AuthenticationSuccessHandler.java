@@ -39,7 +39,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         try {
             Credential credential = authorizationService.getCredentials(email);
 
-            if (credential.getAccessToken() == null || (credential.getExpiresInSeconds() != null && credential.getExpiresInSeconds() <= 300)) {
+            if (credential.getAccessToken() == null || (credential.getExpiresInSeconds() != null && credential.getExpiresInSeconds() <= 3600)) {
                 credential.refreshToken();
                 log.info("Google Credential refreshed for email: {}", email);
             }
