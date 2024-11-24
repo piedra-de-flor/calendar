@@ -17,16 +17,6 @@ import java.util.Optional;
 public class FriendService {
     private final MemberRepository memberRepository;
 
-    @Transactional
-    public boolean createFriend(String memberEmail, long friendId) {
-        Member member = memberRepository.findByEmail(memberEmail)
-                .orElseThrow(NoSuchElementException::new);
-
-        member.addFriends(friendId);
-
-        return true;
-    }
-
     public List<FriendDto> realAllFriends(String memberEmail) {
         List<FriendDto> response = new ArrayList<>();
         Member member = memberRepository.findByEmail(memberEmail)

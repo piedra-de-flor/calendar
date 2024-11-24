@@ -1,6 +1,7 @@
 package com.example.calendar.controller.member;
 
 import com.example.calendar.dto.member.FriendDto;
+import com.example.calendar.service.member.FriendFacadeService;
 import com.example.calendar.service.member.FriendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 public class FriendController {
+    private final FriendFacadeService friendFacadeService;
     private final FriendService friendService;
 
     @PostMapping("/friend")
@@ -20,7 +22,7 @@ public class FriendController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 
-        boolean response = friendService.createFriend(memberEmail, friendId);
+        boolean response = friendFacadeService.createFriend(memberEmail, friendId);
         return ResponseEntity.ok(response);
     }
 
