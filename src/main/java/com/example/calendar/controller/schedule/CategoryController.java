@@ -18,7 +18,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping("/schedule/category")
-    public ResponseEntity<Boolean> createTask(@RequestBody CategoryCreateDto createDto) {
+    public ResponseEntity<Boolean> createCategory(@RequestBody CategoryCreateDto createDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 

@@ -10,7 +10,8 @@ public enum Color {
     GREEN("#00FF00"),
     BLUE("#0000FF"),
     YELLOW("#FFFF00"),
-    SKYBLUE("#CCEEFF");
+    SKYBLUE("#CCEEFF"),
+    GREY("#F8F9FA");
 
     private final String code;
 }

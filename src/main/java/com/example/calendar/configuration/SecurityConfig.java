@@ -6,11 +6,13 @@ import com.example.calendar.support.JwtAuthFilter;
 import com.example.calendar.support.JwtTokenProvider;
 import com.example.calendar.support.OAuth2AuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,8 +25,15 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final JwtTokenProvider jwtTokenProvider;  private final CustomOauth2MemberDetailsService customOauth2MemberDetailsService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final CustomOauth2MemberDetailsService customOauth2MemberDetailsService;
     private final OAuth2AuthenticationSuccessHandler successHandler;
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring()
+                .requestMatchers("/favicon.ico");
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -33,7 +42,12 @@ public class SecurityConfig {
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/sign-in", "/sign-up", "/login/oauth2/code/google", "/calendar/tasks/month").permitAll()
+                        .requestMatchers("/sign-in",
+                                "/sign-up",
+                                "/login/oauth2/code/google",
+                                "/calendar/tasks/month",
+                                "/sign-up/valid")
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -44,7 +58,6 @@ public class SecurityConfig {
                 .addFilterBefore(new GoogleJwtFilter(jwtTokenProvider, "/calendar/tasks/month"), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {

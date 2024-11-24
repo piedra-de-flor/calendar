@@ -23,8 +23,8 @@ public class MemberFacadeService {
         return memberService.readMemberInfo(memberEmail);
     }
 
-    public boolean canName(String name) {
-        return signUpService.canName(name);
+    public boolean isDuplicated(String email) {
+        return signUpService.isDuplicated(email);
     }
 
     public MemberUpdateDto update(MemberUpdateDto updateDto, String email) {

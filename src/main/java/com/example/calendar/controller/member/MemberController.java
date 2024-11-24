@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class MemberController {
@@ -35,9 +36,10 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/sign-up/valid/name")
-    public ResponseEntity<Boolean> canName(@RequestBody String name) {
-        boolean response = service.canName(name);
+    @GetMapping("/sign-up/valid")
+    public ResponseEntity<Boolean> EmailDuplicatedCheck(@RequestParam String email) {
+        log.info("email : {}", email);
+        boolean response = service.isDuplicated(email);
         return ResponseEntity.ok(response);
     }
 

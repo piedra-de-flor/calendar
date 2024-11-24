@@ -34,7 +34,7 @@ public class TaskController {
     }
 
     @GetMapping("/schedule/task/day")
-    public ResponseEntity<DailyTaskDto> readDayTask(@RequestBody LocalDate date) {
+    public ResponseEntity<DailyTaskDto> readDayTask(@RequestParam LocalDate date) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 
@@ -43,7 +43,7 @@ public class TaskController {
     }
 
     @GetMapping("/schedule/task/month")
-    public ResponseEntity<MonthlyTaskDto> readMonthTasks(@RequestBody LocalDate startDate, LocalDate endDate) {
+    public ResponseEntity<MonthlyTaskDto> readMonthTasks(@RequestParam LocalDate startDate,@RequestParam LocalDate endDate) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 
@@ -52,7 +52,7 @@ public class TaskController {
     }
 
     @GetMapping("/schedule/task")
-    public ResponseEntity<TaskDto> readDayTask(@RequestParam long taskId) {
+    public ResponseEntity<TaskDto> readTask(@RequestParam long taskId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 

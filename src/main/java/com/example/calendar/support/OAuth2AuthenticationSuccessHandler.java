@@ -2,7 +2,6 @@ package com.example.calendar.support;
 
 import com.example.calendar.dto.member.JwtToken;
 import com.example.calendar.service.schedule.google.GoogleAuthorizationService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.auth.oauth2.Credential;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -44,16 +43,22 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                 log.info("Google Credential refreshed for email: {}", email);
             }
         } catch (GeneralSecurityException e) {
-            throw new RuntimeException(e);
+            log.error("Error refreshing Google credentials", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to refresh Google credentials");
+            return;
         }
 
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 
+        String redirectUrl = "http://localhost:3000/main";
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        response.getWriter().write(objectMapper.writeValueAsString(jwtToken));
+        redirectUrl += "?accessToken=" + jwtToken.getAccessToken();
+
+        log.info("Redirecting to: {}", redirectUrl);
+        response.sendRedirect(redirectUrl);
     }
 }
+
 

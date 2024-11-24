@@ -33,7 +33,7 @@ public class SignUpService {
         return savedMember.getName();
     }
 
-    public boolean canName(String name) {
-        return memberRepository.existsByName(name);
+    public boolean isDuplicated(String email) {
+        return memberRepository.existsByEmail(email);
     }
 }
