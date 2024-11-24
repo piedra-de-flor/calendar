@@ -4,7 +4,6 @@ import com.example.calendar.domain.entity.group.Teaming;
 import com.example.calendar.domain.entity.invitation.Invitation;
 import com.example.calendar.domain.entity.schedule.Category;
 import com.example.calendar.domain.entity.schedule.Task;
-import com.example.calendar.domain.vo.schedule.DefaultCategories;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -57,7 +56,6 @@ public class Member {
         this.roles.add("USER");
         this.provider = provider;
         this.providerId = providerId;
-        addDefaultCategories();
     }
 
     public void update(String name, String password) {
@@ -67,16 +65,6 @@ public class Member {
 
         if (password != null) {
             this.password = password;
-        }
-    }
-
-    private void addDefaultCategories() {
-        for (DefaultCategories defaultCategory : DefaultCategories.values()) {
-            Category category = Category.builder()
-                    .member(this)
-                    .categoryInfo(defaultCategory.getCategoryInfo())
-                    .build();
-            categories.add(category);
         }
     }
 
