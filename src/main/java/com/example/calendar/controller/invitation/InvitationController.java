@@ -47,21 +47,39 @@ public class InvitationController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/invitations/receive")
-    public ResponseEntity<List<InvitationDto>> readAllReceiveInvitations() {
+    @GetMapping("/invitations/receive/friend")
+    public ResponseEntity<List<InvitationDto>> readAllReceiveFriendInvitations() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 
-        List<InvitationDto> response = invitationFacadeService.realAllReceiveInvitations(memberEmail);
+        List<InvitationDto> response = invitationFacadeService.realAllReceiveFriendInvitations(memberEmail);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/invitations/send")
-    public ResponseEntity<List<InvitationDto>> readAllSendInvitations() {
+    @GetMapping("/invitations/send/friend")
+    public ResponseEntity<List<InvitationDto>> readAllSendFriendInvitations() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 
-        List<InvitationDto> response = invitationFacadeService.realAllSendInvitations(memberEmail);
+        List<InvitationDto> response = invitationFacadeService.realAllSendFriendInvitations(memberEmail);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/invitations/receive/team")
+    public ResponseEntity<List<InvitationDto>> readAllReceiveTeamInvitations() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        List<InvitationDto> response = invitationFacadeService.realAllReceiveFriendInvitations(memberEmail);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/invitations/send/team")
+    public ResponseEntity<List<InvitationDto>> readAllSendTeamInvitations() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        List<InvitationDto> response = invitationFacadeService.realAllSendFriendInvitations(memberEmail);
         return ResponseEntity.ok(response);
     }
 

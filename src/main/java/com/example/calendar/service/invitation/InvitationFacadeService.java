@@ -102,24 +102,52 @@ public class InvitationFacadeService {
         return true;
     }
 
-    public List<InvitationDto> realAllReceiveInvitations(String memberEmail) {
+    public List<InvitationDto> realAllReceiveFriendInvitations(String memberEmail) {
         List<InvitationDto> response = new ArrayList<>();
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(NoSuchElementException::new);
 
         List<Invitation> invitations = invitationService.realAllReceiveInvitations(member).stream()
+                .filter(invitation -> invitation.getClass().equals(FriendInvitation.class))
                 .filter(invitation -> invitation.getState().equals(InvitationState.NOT_DECIDE))
                 .collect(Collectors.toList());
 
         return classifyInvitations(response, invitations);
     }
 
-    public List<InvitationDto> realAllSendInvitations(String memberEmail) {
+    public List<InvitationDto> realAllSendFriendInvitations(String memberEmail) {
         List<InvitationDto> response = new ArrayList<>();
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(NoSuchElementException::new);
 
         List<Invitation> invitations = invitationService.realAllSendInvitations(member).stream()
+                .filter(invitation -> invitation.getClass().equals(FriendInvitation.class))
+                .filter(invitation -> invitation.getState().equals(InvitationState.NOT_DECIDE))
+                .collect(Collectors.toList());
+
+        return classifyInvitations(response, invitations);
+    }
+
+    public List<InvitationDto> realAllReceiveTeamInvitations(String memberEmail) {
+        List<InvitationDto> response = new ArrayList<>();
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        List<Invitation> invitations = invitationService.realAllReceiveInvitations(member).stream()
+                .filter(invitation -> invitation.getClass().equals(TeamInvitation.class))
+                .filter(invitation -> invitation.getState().equals(InvitationState.NOT_DECIDE))
+                .collect(Collectors.toList());
+
+        return classifyInvitations(response, invitations);
+    }
+
+    public List<InvitationDto> realAllSendTeamInvitations(String memberEmail) {
+        List<InvitationDto> response = new ArrayList<>();
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(NoSuchElementException::new);
+
+        List<Invitation> invitations = invitationService.realAllSendInvitations(member).stream()
+                .filter(invitation -> invitation.getClass().equals(TeamInvitation.class))
                 .filter(invitation -> invitation.getState().equals(InvitationState.NOT_DECIDE))
                 .collect(Collectors.toList());
 
