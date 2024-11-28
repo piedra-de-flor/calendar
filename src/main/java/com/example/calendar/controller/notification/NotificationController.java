@@ -2,6 +2,7 @@ package com.example.calendar.controller.notification;
 
 import com.example.calendar.dto.notification.NotificationDto;
 import com.example.calendar.service.notification.NotificationFacadeService;
+import com.example.calendar.support.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +17,13 @@ import java.util.List;
 @RestController
 public class NotificationController {
     private final NotificationFacadeService notificationService;
+    private final JwtTokenProvider tokenProvider;
 
     @GetMapping(value = "/notification/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamNotifications(
+            @RequestParam String token,
             @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = tokenProvider.getAuthentication(token);
         String memberEmail = authentication.getName();
 
         return notificationService.subscribe(memberEmail, lastEventId);

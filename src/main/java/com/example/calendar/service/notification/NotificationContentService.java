@@ -9,22 +9,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class NotificationContentService {
     public String makeFriendInvitationContent(Member sender) {
-        return sender.getName() + NotificationContents.SENDER + NotificationContents.FRIEND_INVITATION;
+        return sender.getName() + NotificationContents.SENDER.getContent() + NotificationContents.FRIEND_INVITATION.getContent();
     }
 
     public String inviteTeam(Member sender, Team team) {
-        return sender.getName() + NotificationContents.SENDER + team.getName() + NotificationContents.TEAM_INVITATION;
+        return sender.getName() + NotificationContents.SENDER.getContent() + team.getName() + NotificationContents.TEAM_INVITATION.getContent();
     }
 
     public String acceptInvitation(Member receiver) {
-        return receiver.getName() + NotificationContents.SENDER + NotificationContents.ACCEPT_INVITATION;
+        return receiver.getName() + NotificationContents.SENDER.getContent() + NotificationContents.ACCEPT_INVITATION.getContent();
     }
 
     public String createVote(Team team) {
-        return team.getName() + NotificationContents.SENDER_TEAM + NotificationContents.CREATE_VOTE;
+        return team.getName() + NotificationContents.SENDER_TEAM.getContent() + NotificationContents.CREATE_VOTE.getContent();
     }
 
     public String completeVote(Vote vote) {
-        return vote.getTeam().getName() + NotificationContents.SENDER_TEAM + vote.getTitle() + NotificationContents.COMPLETE_VOTE;
+        return vote.getTeam().getName() + NotificationContents.SENDER_TEAM.getContent() + vote.getTitle() + NotificationContents.COMPLETE_VOTE.getContent();
     }
 }

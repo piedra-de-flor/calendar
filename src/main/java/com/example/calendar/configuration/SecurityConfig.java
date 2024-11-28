@@ -46,7 +46,8 @@ public class SecurityConfig {
                                 "/sign-up",
                                 "/login/oauth2/code/google",
                                 "/calendar/tasks/month",
-                                "/sign-up/valid")
+                                "/sign-up/valid",
+                                "/notification/subscribe")
                         .permitAll()
                         .anyRequest().authenticated()
                 )
