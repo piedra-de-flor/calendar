@@ -4,7 +4,6 @@ import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.dto.invitation.FriendInvitationDto;
 import com.example.calendar.repository.MemberRepository;
 import com.example.calendar.service.invitation.InvitationFacadeService;
-import com.example.calendar.service.notification.NotificationFacadeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

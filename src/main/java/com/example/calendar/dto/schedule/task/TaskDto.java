@@ -4,6 +4,7 @@ import java.time.LocalTime;
 
 public record TaskDto (
         long taskId,
+        long categoryId,
         String categoryName,
         String categoryColor,
         LocalTime start,

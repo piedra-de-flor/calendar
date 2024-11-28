@@ -1,6 +1,6 @@
 package com.example.calendar.service.schedule.google;
 
-import com.example.calendar.domain.vo.schedule.EmptyCategoryId;
+import com.example.calendar.domain.vo.schedule.DefaultCategoryId;
 import com.example.calendar.dto.schedule.google.GoogleTaskCreateDto;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
@@ -48,7 +48,7 @@ public class GoogleFacadeService {
                     .toLocalTime();
 
             GoogleTaskCreateDto createDto = new GoogleTaskCreateDto(
-                    EmptyCategoryId.EMPTY_CATEGORY_ID.getValue(),
+                    DefaultCategoryId.EMPTY_CATEGORY_ID.getValue(),
                     date,
                     startTime,
                     endTime,

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum EmptyCategoryId {
+public enum DefaultCategoryId {
     EMPTY_CATEGORY_ID(1L);
 
     private final long value;

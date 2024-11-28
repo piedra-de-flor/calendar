@@ -39,7 +39,11 @@ public class FriendService {
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(NoSuchElementException::new);
 
+        Member friend = memberRepository.findById(friendId)
+                        .orElseThrow(NoSuchElementException::new);
+
         member.deleteFriends(friendId);
+        friend.deleteFriends(member.getId());
 
         return true;
     }

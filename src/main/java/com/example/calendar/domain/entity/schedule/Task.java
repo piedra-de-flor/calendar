@@ -25,7 +25,7 @@ public class Task {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = true, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT))
     private Category category;
 
     private LocalDate date;

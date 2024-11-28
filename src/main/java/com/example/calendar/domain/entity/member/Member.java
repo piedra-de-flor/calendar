@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -96,7 +97,11 @@ public class Member {
         this.categories.add(category);
     }
 
-    public void deleteCategory(Category category) {
+    public void deleteCategory(Category category, Category defaultCategory) {
+        tasks.stream()
+                .filter(task -> Objects.equals(task.getCategory().getId(), category.getId()))
+                .forEach(task -> task.updateCategory(defaultCategory));
+
         this.categories.remove(category);
     }
 

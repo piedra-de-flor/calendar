@@ -96,6 +96,7 @@ public class TaskService {
         if (member.getId() == task.getMember().getId()) {
             return new TaskDto(
                     taskId,
+                    task.getCategory().getId(),
                     task.getCategory().getCategoryName(),
                     task.getCategory().getCategoryColor(),
                     task.getStartTime(),
@@ -116,6 +117,7 @@ public class TaskService {
         for (Task task : todayTasks) {
             taskDtos.add(new TaskDto(
                     task.getId(),
+                    task.getCategory().getId(),
                     task.getCategory().getCategoryName(),
                     task.getCategory().getCategoryColor(),
                     task.getStartTime(),

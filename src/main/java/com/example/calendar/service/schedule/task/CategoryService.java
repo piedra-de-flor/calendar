@@ -4,6 +4,7 @@ import com.example.calendar.domain.entity.member.Member;
 import com.example.calendar.domain.entity.schedule.Category;
 import com.example.calendar.domain.vo.schedule.CategoryInfo;
 import com.example.calendar.domain.vo.schedule.Color;
+import com.example.calendar.domain.vo.schedule.DefaultCategoryId;
 import com.example.calendar.dto.schedule.category.CategoryCreateDto;
 import com.example.calendar.dto.schedule.category.CategoryDto;
 import com.example.calendar.dto.schedule.category.CategoryUpdateDto;
@@ -53,9 +54,12 @@ public class CategoryService {
         Category target = categoryRepository.findById(categoryId)
                 .orElseThrow(NoSuchElementException::new);
 
+        Category defaultCategory = categoryRepository.findById(DefaultCategoryId.EMPTY_CATEGORY_ID.getValue())
+                .orElseThrow(IllegalArgumentException::new);
+
         if (member.getId() == target.getMember().getId()) {
             categoryRepository.delete(target);
-            member.deleteCategory(target);
+            member.deleteCategory(target, defaultCategory);
             return true;
         }
 
@@ -64,6 +68,7 @@ public class CategoryService {
 
     @Transactional
     public boolean updateCategory(String memberEmail, CategoryUpdateDto updateDto) {
+        System.out.println("ID : " + updateDto.categoryId());
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(NoSuchElementException::new);
 
@@ -84,7 +89,7 @@ public class CategoryService {
                 .orElseThrow(NoSuchElementException::new);
 
         for (Category category : member.getCategories()) {
-            response.add(new CategoryDto(category.getCategoryName(), category.getCategoryColor()));
+            response.add(new CategoryDto(category.getId(), category.getCategoryName(), category.getCategoryColor()));
         }
 
         return response;
