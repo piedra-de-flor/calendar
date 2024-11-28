@@ -50,6 +50,7 @@ public class TeamService {
                 .build();
 
         member.addTeam(teaming);
+        teamRepository.save(team);
         teamingRepository.save(teaming);
 
         for (long friendId : createDto.friends()) {
@@ -58,8 +59,6 @@ public class TeamService {
 
             invitationFacadeService.sendTeamInvitation(memberEmail, new TeamInvitationDto(friend.getEmail(), team.getId()));
         }
-
-        teamRepository.save(team);
 
         return true;
     }
