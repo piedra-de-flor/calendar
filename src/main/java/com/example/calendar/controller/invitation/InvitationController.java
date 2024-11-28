@@ -70,7 +70,7 @@ public class InvitationController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 
-        List<InvitationDto> response = invitationFacadeService.realAllReceiveFriendInvitations(memberEmail);
+        List<InvitationDto> response = invitationFacadeService.realAllReceiveTeamInvitations(memberEmail);
         return ResponseEntity.ok(response);
     }
 
@@ -79,7 +79,7 @@ public class InvitationController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 
-        List<InvitationDto> response = invitationFacadeService.realAllSendFriendInvitations(memberEmail);
+        List<InvitationDto> response = invitationFacadeService.realAllSendTeamInvitations(memberEmail);
         return ResponseEntity.ok(response);
     }
 

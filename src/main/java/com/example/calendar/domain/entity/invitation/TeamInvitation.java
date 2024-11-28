@@ -16,7 +16,7 @@ public class TeamInvitation extends Invitation {
     @ManyToOne
     private Team team;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Teaming teaming;
 
     public TeamInvitation(Member receiver, Member sender, Team team, Teaming teaming) {

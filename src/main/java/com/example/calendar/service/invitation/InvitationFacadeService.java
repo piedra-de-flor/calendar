@@ -69,7 +69,6 @@ public class InvitationFacadeService {
                     .member(receiver)
                     .build();
 
-            teamingRepository.save(teaming);
             Invitation groupInvitation = invitationService.createTeamInvitation(sender, receiver, team, teaming);
             receiver.addInvitation(groupInvitation);
 

@@ -123,6 +123,7 @@ public class TeamService {
                 .orElseThrow(NoSuchElementException::new);
 
         member.exitTeam(teaming);
+        teamingRepository.delete(teaming);
 
         return true;
     }
@@ -131,6 +132,12 @@ public class TeamService {
     public void deleteTeam() {
         List<Team> emptyTeams = teamRepository.findAllByTeamingsEmpty();
         teamRepository.deleteAll(emptyTeams);
+
         log.info("Deleted {} empty groups", emptyTeams.size());
+
+        for (Team team : emptyTeams) {
+            List<Teaming> deletedTeaming = teamingRepository.deleteAllByTeam(team);
+            log.info("Deleted {} invitations about empty groups", deletedTeaming.size());
+        }
     }
 }

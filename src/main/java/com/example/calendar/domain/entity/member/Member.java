@@ -35,7 +35,7 @@ public class Member {
     private List<Long> friends = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Teaming> teamings = new ArrayList<>();;
+    private List<Teaming> teamings = new ArrayList<>();
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Invitation> receivedInvitations = new ArrayList<>();
