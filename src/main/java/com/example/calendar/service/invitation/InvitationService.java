@@ -32,8 +32,8 @@ public class InvitationService {
     }
 
     @Transactional
-    public Invitation createTeamInvitation(Member sender, Member receiver, Team team, Teaming teaming) {
-        Invitation teamInvitation = new TeamInvitation(receiver, sender, team, teaming);
+    public Invitation createTeamInvitation(Member sender, Member receiver, Team team) {
+        Invitation teamInvitation = new TeamInvitation(receiver, sender, team);
 
         invitationRepository.save(teamInvitation);
         return teamInvitation;

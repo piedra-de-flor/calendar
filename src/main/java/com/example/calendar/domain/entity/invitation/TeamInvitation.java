@@ -16,12 +16,15 @@ public class TeamInvitation extends Invitation {
     @ManyToOne
     private Team team;
 
-    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(optional = true)
     private Teaming teaming;
 
-    public TeamInvitation(Member receiver, Member sender, Team team, Teaming teaming) {
+    public TeamInvitation(Member receiver, Member sender, Team team) {
         super(sender, receiver);
         this.team = team;
+    }
+
+    public void saveTeaming(Teaming teaming) {
         this.teaming = teaming;
     }
 

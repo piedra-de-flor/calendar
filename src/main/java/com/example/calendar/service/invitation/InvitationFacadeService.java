@@ -64,12 +64,7 @@ public class InvitationFacadeService {
                 .orElseThrow(NoSuchElementException::new);
 
         if (inTheTeam(sender, invitationDto.teamId()) && !inTheTeam(receiver, invitationDto.teamId()) && !alreadySendTeamInvitation(sender, receiver, team.getId())) {
-            Teaming teaming = Teaming.builder()
-                    .team(team)
-                    .member(receiver)
-                    .build();
-
-            Invitation groupInvitation = invitationService.createTeamInvitation(sender, receiver, team, teaming);
+            Invitation groupInvitation = invitationService.createTeamInvitation(sender, receiver, team);
             receiver.addInvitation(groupInvitation);
 
             notificationService.send(receiver, NotificationType.INVITATION, notificationService.inviteTeamMessage(sender, team), NotificationRedirectUrl.INVITATION_TEAM.getUrl());
@@ -86,7 +81,13 @@ public class InvitationFacadeService {
         invitation.accept();
         notificationService.send(invitation.getSender(), NotificationType.INVITATION, notificationService.acceptInvitation(invitation.getReceiver()), NotificationRedirectUrl.INVITATION_TEAM.getUrl());
         if (invitation.getClass() == TeamInvitation.class) {
-            teamingRepository.save(((TeamInvitation) invitation).getTeaming());
+            Teaming teaming = Teaming.builder()
+                    .team(((TeamInvitation) invitation).getTeam())
+                    .member(invitation.getReceiver())
+                    .build();
+
+            ((TeamInvitation) invitation).saveTeaming(teaming);
+            teamingRepository.save(teaming);
         }
 
         return true;
