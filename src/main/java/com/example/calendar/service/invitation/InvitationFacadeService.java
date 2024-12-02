@@ -41,7 +41,7 @@ public class InvitationFacadeService {
         Member receiver = memberRepository.findByEmail(invitationDto.receiverEmail())
                 .orElseThrow(NoSuchElementException::new);
 
-        if (isFriend(sender, receiver) || alreadySendFriendInvitation(sender, receiver)) {
+        if (sender.isFriend(receiver) || alreadySendFriendInvitation(sender, receiver)) {
             throw new IllegalArgumentException("already friend or sent request");
         }
 
@@ -63,7 +63,7 @@ public class InvitationFacadeService {
         Team team = teamRepository.findById(invitationDto.teamId())
                 .orElseThrow(NoSuchElementException::new);
 
-        if (inTheTeam(sender, invitationDto.teamId()) && !inTheTeam(receiver, invitationDto.teamId()) && !alreadySendTeamInvitation(sender, receiver, team.getId())) {
+        if (sender.inTheTeam(invitationDto.teamId()) && !receiver.inTheTeam(invitationDto.teamId()) && !alreadySendTeamInvitation(sender, receiver, team.getId())) {
             Invitation groupInvitation = invitationService.createTeamInvitation(sender, receiver, team);
             receiver.addInvitation(groupInvitation);
 
@@ -78,18 +78,22 @@ public class InvitationFacadeService {
     public boolean acceptInvitation(long invitationId) {
         Invitation invitation = invitationService.readInvitation(invitationId);
 
-        invitation.accept();
         notificationService.send(invitation.getSender(), NotificationType.INVITATION, notificationService.acceptInvitation(invitation.getReceiver()), NotificationRedirectUrl.INVITATION_TEAM.getUrl());
-        if (invitation.getClass() == TeamInvitation.class) {
+        if (invitation instanceof TeamInvitation) {
             Teaming teaming = Teaming.builder()
                     .team(((TeamInvitation) invitation).getTeam())
                     .member(invitation.getReceiver())
                     .build();
 
-            ((TeamInvitation) invitation).saveTeaming(teaming);
+            invitation.getReceiver().addTeam(teaming);
+            ((TeamInvitation) invitation).getTeam().addTeaming(teaming);
             teamingRepository.save(teaming);
+        } else {
+            invitation.getReceiver().addFriends(invitation.getSender().getId());
+            invitation.getSender().addFriends(invitation.getReceiver().getId());
         }
 
+        invitationService.deleteInvitation(invitationId);
         return true;
     }
 
@@ -108,7 +112,7 @@ public class InvitationFacadeService {
                 .orElseThrow(NoSuchElementException::new);
 
         List<Invitation> invitations = invitationService.realAllReceiveInvitations(member).stream()
-                .filter(invitation -> invitation.getClass().equals(FriendInvitation.class))
+                .filter(invitation -> invitation instanceof FriendInvitation)
                 .filter(invitation -> invitation.getState().equals(InvitationState.NOT_DECIDE))
                 .collect(Collectors.toList());
 
@@ -121,8 +125,7 @@ public class InvitationFacadeService {
                 .orElseThrow(NoSuchElementException::new);
 
         List<Invitation> invitations = invitationService.realAllSendInvitations(member).stream()
-                .filter(invitation -> invitation.getClass().equals(FriendInvitation.class))
-                .filter(invitation -> invitation.getState().equals(InvitationState.NOT_DECIDE))
+                .filter(invitation -> invitation instanceof FriendInvitation)
                 .collect(Collectors.toList());
 
         return classifyInvitations(response, invitations);
@@ -134,7 +137,7 @@ public class InvitationFacadeService {
                 .orElseThrow(NoSuchElementException::new);
 
         List<Invitation> invitations = invitationService.realAllReceiveInvitations(member).stream()
-                .filter(invitation -> invitation.getClass().equals(TeamInvitation.class))
+                .filter(invitation -> invitation instanceof TeamInvitation)
                 .filter(invitation -> invitation.getState().equals(InvitationState.NOT_DECIDE))
                 .collect(Collectors.toList());
 
@@ -147,8 +150,7 @@ public class InvitationFacadeService {
                 .orElseThrow(NoSuchElementException::new);
 
         List<Invitation> invitations = invitationService.realAllSendInvitations(member).stream()
-                .filter(invitation -> invitation.getClass().equals(TeamInvitation.class))
-                .filter(invitation -> invitation.getState().equals(InvitationState.NOT_DECIDE))
+                .filter(invitation -> invitation instanceof TeamInvitation)
                 .collect(Collectors.toList());
 
         return classifyInvitations(response, invitations);
@@ -158,7 +160,7 @@ public class InvitationFacadeService {
         for (Invitation invitation : invitations) {
             InvitationDto invitationDto;
 
-            if (invitation.getClass() == TeamInvitation.class) {
+            if (invitation instanceof TeamInvitation) {
                 invitationDto = new InvitationDto(
                         invitation.getId(),
                         InvitationType.TEAM.getType(),
@@ -192,24 +194,14 @@ public class InvitationFacadeService {
         return invitationService.cancelInvitation(member, invitation);
     }
 
-    private boolean inTheTeam(Member member, long teamId) {
-        return member.getTeamings().stream()
-                .anyMatch(teaming -> teaming.getTeam().getId() == teamId);
-    }
-
-    private boolean isFriend(Member sender, Member receiver) {
-        return sender.getFriends().stream()
-                .anyMatch(aLong -> Objects.equals(aLong, receiver.getId()));
-    }
-
     private boolean alreadySendFriendInvitation(Member sender, Member receiver) {
         boolean senderSent = sender.getSentInvitations().stream()
-                .filter(invitation -> invitation.getClass().equals(FriendInvitation.class))
+                .filter(invitation -> invitation instanceof FriendInvitation)
                 .filter(invitation -> invitation.getState().equals(InvitationState.NOT_DECIDE))
                 .anyMatch(invitation -> invitation.getReceiver().getId() == receiver.getId());
 
         boolean senderReceived = sender.getReceivedInvitations().stream()
-                .filter(invitation -> invitation.getClass().equals(FriendInvitation.class))
+                .filter(invitation -> invitation instanceof FriendInvitation)
                 .filter(invitation -> invitation.getState().equals(InvitationState.NOT_DECIDE))
                 .anyMatch(invitation -> invitation.getSender().getId() == receiver.getId());
 
@@ -218,13 +210,13 @@ public class InvitationFacadeService {
 
     private boolean alreadySendTeamInvitation(Member sender, Member receiver, long teamId) {
         boolean senderSent =  sender.getSentInvitations().stream()
-                .filter(invitation -> invitation.getClass().equals(TeamInvitation.class))
+                .filter(invitation -> invitation instanceof TeamInvitation)
                 .filter(invitation -> ((TeamInvitation) invitation).getTeam().getId() == teamId)
                 .filter(invitation -> invitation.getState().equals(InvitationState.NOT_DECIDE))
                 .anyMatch(invitation -> invitation.getReceiver().getId() == receiver.getId());
 
         boolean senderReceived = sender.getReceivedInvitations().stream()
-                .filter(invitation -> invitation.getClass().equals(TeamInvitation.class))
+                .filter(invitation -> invitation instanceof TeamInvitation)
                 .filter(invitation -> ((TeamInvitation) invitation).getTeam().getId() == teamId)
                 .filter(invitation -> invitation.getState().equals(InvitationState.NOT_DECIDE))
                 .anyMatch(invitation -> invitation.getSender().getId() == receiver.getId());

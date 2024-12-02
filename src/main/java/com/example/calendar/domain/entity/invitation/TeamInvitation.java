@@ -16,21 +16,8 @@ public class TeamInvitation extends Invitation {
     @ManyToOne
     private Team team;
 
-    @OneToOne(optional = true)
-    private Teaming teaming;
-
     public TeamInvitation(Member receiver, Member sender, Team team) {
         super(sender, receiver);
         this.team = team;
-    }
-
-    public void saveTeaming(Teaming teaming) {
-        this.teaming = teaming;
-    }
-
-    @Override
-    protected void acceptHandle() {
-        team.addTeaming(teaming);
-        super.getReceiver().addTeam(teaming);
     }
 }

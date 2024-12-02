@@ -15,9 +15,4 @@ public class FriendInvitation extends Invitation {
     public FriendInvitation(Member sender, Member receiver) {
         super(sender, receiver);
     }
-    @Override
-    protected void acceptHandle() {
-        super.getReceiver().addFriends(super.getSender().getId());
-        super.getSender().addFriends(super.getReceiver().getId());
-    }
 }

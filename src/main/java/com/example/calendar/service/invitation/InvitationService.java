@@ -25,7 +25,7 @@ public class InvitationService {
 
     @Transactional
     public Invitation createFriendInvitation(Member sender, Member receiver) {
-        FriendInvitation friendInvitation = new FriendInvitation(sender, receiver);
+        Invitation friendInvitation = new FriendInvitation(sender, receiver);
 
         invitationRepository.save(friendInvitation);
         return friendInvitation;
@@ -52,24 +52,16 @@ public class InvitationService {
                 .orElseThrow(NoSuchElementException::new);
     }
 
-    private boolean isSent(Invitation invitation, Member member) {
-        Member sender = invitation.getSender();
-        return sender.getEmail().equals(member.getEmail());
-    }
-
     @Transactional
     public boolean cancelInvitation(Member member, Invitation invitation) {
-        if (isSent(invitation, member)) {
-            invitationRepository.delete(invitation);
+        if (invitation.isSentBy(member)) {
+            deleteInvitation(invitation.getId());
         }
 
         return true;
     }
 
-    @Scheduled(cron = "0 59 23 * * *")
-    public void deleteInvitation() {
-        List<Invitation> targetInvitations = invitationRepository.findAllByStateEquals(InvitationState.DENIED);
-        invitationRepository.deleteAll(targetInvitations);
-        log.info("Deleted {} denied invitations", targetInvitations.size());
+    public void deleteInvitation(long invitationID) {
+        invitationRepository.deleteById(invitationID);
     }
 }

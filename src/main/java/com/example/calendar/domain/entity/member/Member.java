@@ -105,6 +105,16 @@ public class Member {
         this.categories.remove(category);
     }
 
+    public boolean inTheTeam(long teamId) {
+        return teamings.stream()
+                .anyMatch(teaming -> teaming.getTeam().getId() == teamId);
+    }
+
+    public boolean isFriend(Member friend) {
+        return friends.stream()
+                .anyMatch(aLong -> Objects.equals(aLong, friend.getId()));
+    }
+
     public void addInvitation(Invitation invitation) {
         String senderEmail = invitation.getSender().getEmail();
         if (senderEmail.equals(this.email)) {

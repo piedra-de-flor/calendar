@@ -39,14 +39,11 @@ public class Invitation {
         this.date = LocalDate.now();
     }
 
-    public void accept() {
-        this.state = InvitationState.ACCEPT;
-        acceptHandle();
-    }
-
     public void denied() {
         this.state = InvitationState.DENIED;
     }
 
-    protected void acceptHandle() {};
+    public boolean isSentBy(Member member) {
+        return this.sender.getId() == member.getId();
+    }
 }
