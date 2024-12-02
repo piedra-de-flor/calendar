@@ -42,7 +42,7 @@ public class InvitationFacadeService {
                 .orElseThrow(NoSuchElementException::new);
 
         if (sender.isFriend(receiver) || alreadySendFriendInvitation(sender, receiver)) {
-            throw new IllegalArgumentException("already friend or sent request");
+            throw new IllegalArgumentException("send Friend invitation error");
         }
 
         Invitation friendInvitation = invitationService.createFriendInvitation(sender, receiver);
@@ -63,22 +63,21 @@ public class InvitationFacadeService {
         Team team = teamRepository.findById(invitationDto.teamId())
                 .orElseThrow(NoSuchElementException::new);
 
-        if (sender.inTheTeam(invitationDto.teamId()) && !receiver.inTheTeam(invitationDto.teamId()) && !alreadySendTeamInvitation(sender, receiver, team.getId())) {
-            Invitation groupInvitation = invitationService.createTeamInvitation(sender, receiver, team);
-            receiver.addInvitation(groupInvitation);
-
-            notificationService.send(receiver, NotificationType.INVITATION, notificationService.inviteTeamMessage(sender, team), NotificationRedirectUrl.INVITATION_TEAM.getUrl());
-            return true;
+        if (!sender.inTheTeam(invitationDto.teamId()) || receiver.inTheTeam(invitationDto.teamId()) || alreadySendTeamInvitation(sender, receiver, team.getId())) {
+            throw new IllegalArgumentException("send Team invitation error");
         }
 
-        throw new IllegalArgumentException("already in the team or you don't have auth");
+        Invitation groupInvitation = invitationService.createTeamInvitation(sender, receiver, team);
+        receiver.addInvitation(groupInvitation);
+
+        notificationService.send(receiver, NotificationType.INVITATION, notificationService.inviteTeamMessage(sender, team), NotificationRedirectUrl.INVITATION_TEAM.getUrl());
+        return true;
     }
 
     @Transactional
     public boolean acceptInvitation(long invitationId) {
         Invitation invitation = invitationService.readInvitation(invitationId);
 
-        notificationService.send(invitation.getSender(), NotificationType.INVITATION, notificationService.acceptInvitation(invitation.getReceiver()), NotificationRedirectUrl.INVITATION_TEAM.getUrl());
         if (invitation instanceof TeamInvitation) {
             Teaming teaming = Teaming.builder()
                     .team(((TeamInvitation) invitation).getTeam())
@@ -94,6 +93,8 @@ public class InvitationFacadeService {
         }
 
         invitationService.deleteInvitation(invitationId);
+
+        notificationService.send(invitation.getSender(), NotificationType.INVITATION, notificationService.acceptInvitation(invitation.getReceiver()), NotificationRedirectUrl.INVITATION_TEAM.getUrl());
         return true;
     }
 
@@ -102,7 +103,6 @@ public class InvitationFacadeService {
         Invitation invitation = invitationService.readInvitation(invitationId);
 
         invitation.denied();
-
         return true;
     }
 
@@ -209,7 +209,7 @@ public class InvitationFacadeService {
     }
 
     private boolean alreadySendTeamInvitation(Member sender, Member receiver, long teamId) {
-        boolean senderSent =  sender.getSentInvitations().stream()
+        boolean senderSent = sender.getSentInvitations().stream()
                 .filter(invitation -> invitation instanceof TeamInvitation)
                 .filter(invitation -> ((TeamInvitation) invitation).getTeam().getId() == teamId)
                 .filter(invitation -> invitation.getState().equals(InvitationState.NOT_DECIDE))
