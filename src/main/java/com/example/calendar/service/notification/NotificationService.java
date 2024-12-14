@@ -122,6 +122,7 @@ public class NotificationService {
         if (notification.getReceiver().getEmail().equals(email)) {
             notification.read();
             notificationRepository.save(notification);
+            return;
         }
 
         throw new IllegalArgumentException("you don't have auth to read the notification");
