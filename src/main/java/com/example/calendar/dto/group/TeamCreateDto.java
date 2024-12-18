@@ -11,7 +11,11 @@ public record TeamCreateDto(
         Objects.requireNonNull(name, "Name must not be null");
 
         if (name.isEmpty() || name.length() > 10) {
-            throw new IllegalArgumentException("group name must be between 1 and 10 characters");
+            throw new IllegalArgumentException("Group name must be between 1 and 10 characters");
+        }
+
+        if (name.startsWith(" ") || name.endsWith(" ")) {
+            throw new IllegalArgumentException("Group name should not start or end with blank");
         }
     }
 }

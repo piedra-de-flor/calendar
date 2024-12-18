@@ -1,12 +1,10 @@
 package com.example.calendar.dto.member;
 
 import java.util.Objects;
-import java.util.regex.Pattern;
+
+import static com.example.calendar.domain.vo.EmailPattern.EMAIL_PATTERN;
 
 public record SignUpDto(String email, String password, String name) {
-    private static final Pattern EMAIL_PATTERN =
-            Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
-
     public SignUpDto {
         Objects.requireNonNull(email, "Email must not be null");
         Objects.requireNonNull(password, "Password must not be null");
@@ -14,6 +12,14 @@ public record SignUpDto(String email, String password, String name) {
 
         if (!EMAIL_PATTERN.matcher(email).matches()) {
             throw new IllegalArgumentException("Invalid email format");
+        }
+
+        if (email.length() > 320) {
+            throw new IllegalArgumentException("Email must be smaller than 320 characters");
+        }
+
+        if (email.contains(" ")) {
+            throw new IllegalArgumentException("Email should not contain blank");
         }
 
         if (password.length() < 5 || password.length() > 20) {
