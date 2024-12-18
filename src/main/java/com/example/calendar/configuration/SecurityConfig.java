@@ -43,7 +43,7 @@ public class SecurityConfig {
         return httpSecurity
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("http://3.39.207.8")); // React 서버의 IP
+                    config.setAllowedOrigins(List.of("http://woodking2")); // React 서버의 IP
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
                     config.setAllowCredentials(true);
