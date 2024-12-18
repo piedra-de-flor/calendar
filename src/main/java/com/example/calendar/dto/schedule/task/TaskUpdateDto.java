@@ -17,7 +17,7 @@ public record TaskUpdateDto (
         Objects.requireNonNull(startTime, "startTime must not be null");
         Objects.requireNonNull(endTime, "endTime must not be null");
 
-        if (description.length() < 10) {
+        if (description.length() >= 10) {
             throw new IllegalArgumentException("Title must be smaller than 10 character");
         }
 
