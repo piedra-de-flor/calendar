@@ -14,7 +14,7 @@ public record FriendInvitationDto (
             throw new IllegalArgumentException("Invalid email format");
         }
 
-        if (receiverEmail.length() < 320) {
+        if (receiverEmail.length() >= 320) {
             throw new IllegalArgumentException("Email must be smaller than 320 characters");
         }
 
