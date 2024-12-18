@@ -18,11 +18,11 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping("/schedule/category")
-    public ResponseEntity<Boolean> createCategory(@RequestBody CategoryCreateDto createDto) {
+    public ResponseEntity<Long> createCategory(@RequestBody CategoryCreateDto createDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberEmail = authentication.getName();
 
-        boolean response = categoryService.createCategory(memberEmail, createDto);
+        long response = categoryService.createCategory(memberEmail, createDto);
         return ResponseEntity.ok(response);
     }
 

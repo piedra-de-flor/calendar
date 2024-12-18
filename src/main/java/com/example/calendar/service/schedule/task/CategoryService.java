@@ -25,7 +25,7 @@ public class CategoryService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public boolean createCategory(String memberEmail, CategoryCreateDto createDto) {
+    public long createCategory(String memberEmail, CategoryCreateDto createDto) {
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(NoSuchElementException::new);
 
@@ -41,9 +41,9 @@ public class CategoryService {
                 .categoryInfo(categoryInfo)
                 .build();
 
-        categoryRepository.save(category);
+        Category savedCategory = categoryRepository.save(category);
         member.addCategory(category);
-        return true;
+        return savedCategory.getId();
     }
 
     @Transactional
