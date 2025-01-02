@@ -81,9 +81,6 @@ public class TeamTaskService {
             LocalDate date, LocalTime availableFrom, LocalTime availableTo,
             Duration minDuration, Duration minGap, int minMembers) {
 
-        System.out.println("Calculating daily slots for date: " + date);
-
-        // 병합된 TimeBlock 가져오기
         List<TimeBlock> mergedBlocks = memberTimeBlocks.values().stream()
                 .flatMap(blocks -> mergeTimeBlocks(blocks).stream())
                 .filter(block -> block.getDate().equals(date))
@@ -94,7 +91,6 @@ public class TeamTaskService {
         LocalTime lastEndTime = availableFrom;
 
         if (mergedBlocks.isEmpty()) {
-            // 병합된 블록이 없을 경우 전체 가능 시간 추가
             List<String> availableMembers = memberTimeBlocks.keySet().stream()
                     .map(Member::getName)
                     .collect(Collectors.toList());
@@ -112,17 +108,14 @@ public class TeamTaskService {
         for (TimeBlock block : mergedBlocks) {
             LocalTime potentialStart = lastEndTime.plus(minGap);
 
-            // 시간 경계 처리
             if (potentialStart.isBefore(block.getStartTime()) && potentialStart.isBefore(availableTo)) {
                 LocalTime potentialEnd = block.getStartTime();
                 if (potentialEnd.isAfter(availableTo)) {
                     potentialEnd = availableTo;
                 }
 
-                // 최소 지속 시간 조건 확인
                 if (Duration.between(potentialStart, potentialEnd).compareTo(minDuration) >= 0) {
                     List<String> availableMembers = findAvailableMembers(memberTimeBlocks, date, potentialStart, potentialEnd);
-                    System.out.println("Available Members: " + availableMembers);
 
                     if (availableMembers.size() >= minMembers) {
                         availableSlots.add(new AvailableTimeSlot(
@@ -134,16 +127,13 @@ public class TeamTaskService {
                 }
             }
 
-            // 마지막 종료 시간 갱신
             lastEndTime = block.getEndTime().isAfter(lastEndTime) ? block.getEndTime() : lastEndTime;
         }
 
-        // 하루의 마지막 여유 시간 처리
         LocalTime potentialStart = lastEndTime.plus(minGap);
         if (potentialStart.isBefore(availableTo)) {
             if (Duration.between(potentialStart, availableTo).compareTo(minDuration) >= 0) {
                 List<String> availableMembers = findAvailableMembers(memberTimeBlocks, date, potentialStart, availableTo);
-                System.out.println("Available Members for end of day: " + availableMembers);
 
                 if (availableMembers.size() >= minMembers) {
                     availableSlots.add(new AvailableTimeSlot(

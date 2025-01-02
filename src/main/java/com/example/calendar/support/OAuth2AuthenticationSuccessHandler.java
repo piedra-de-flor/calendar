@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -50,16 +51,19 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 
+        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", jwtToken.getAccessToken())
+                .secure(true)
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60)
+                .build();
+
+        response.setHeader("Set-Cookie", accessTokenCookie.toString());
+
         String redirectUrl = "http://woodking2.site/main";
-        //String redirectUrl = "http://localhost:3000/main";
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-
-        redirectUrl += "?accessToken=" + jwtToken.getAccessToken();
 
         log.info("Redirecting to: {}", redirectUrl);
         response.sendRedirect(redirectUrl);
     }
 }
-
-
