@@ -28,8 +28,9 @@ public class MemberController {
     public ResponseEntity<Void> signIn(@RequestBody SignInDto signInDto, HttpServletResponse response) {
         JwtToken token = service.signIn(signInDto);
         ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", token.getAccessToken())
-                .path("/")
+                .secure(false)
                 .sameSite("None")
+                .path("/")
                 .maxAge(7 * 24 * 60 * 60)
                 .build();
 
