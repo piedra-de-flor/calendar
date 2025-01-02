@@ -30,6 +30,7 @@ public class MemberController {
         ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", token.getAccessToken())
                 .secure(false)
                 .path("/")
+                .sameSite("None")
                 .maxAge(7 * 24 * 60 * 60)
                 .build();
 
