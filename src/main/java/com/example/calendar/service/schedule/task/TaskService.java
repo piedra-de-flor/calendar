@@ -137,8 +137,11 @@ public class TaskService {
         Task task = taskRepository.findById(updateDto.taskId())
                 .orElseThrow(NoSuchElementException::new);
 
+        Category category = categoryRepository.findById(updateDto.categoryId())
+                .orElseThrow(NoSuchElementException::new);
+
         if (member.getId() == task.getMember().getId()) {
-            task.update(updateDto);
+            task.update(updateDto, category);
             return task.getId();
         }
 

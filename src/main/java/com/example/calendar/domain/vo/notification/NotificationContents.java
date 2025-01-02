@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum NotificationContents {
-    SENDER("님이"),
-    SENDER_TEAM("팀 에서"),
+    SENDER("님이 "),
+    SENDER_TEAM("팀 에서 "),
     TEAM_INVITATION(" 팀에 초대를 했습니다."),
     FRIEND_INVITATION(" 친구를 요청하셨습니다."),
     CREATE_VOTE(" 투표가 생성되었습니다!"),

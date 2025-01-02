@@ -6,6 +6,7 @@ import java.util.Objects;
 
 public record TaskUpdateDto (
         long taskId,
+        long categoryId,
         LocalDate date,
         LocalTime startTime,
         LocalTime endTime,

@@ -80,6 +80,9 @@ public class VoteService {
                 vote.getTitle(),
                 vote.getDescription(),
                 vote.getStatus(),
+                vote.isMultipleChoice(),
+                vote.getCreatedAt(),
+                vote.getClosedAt(),
                 optionInfo
         );
     }
@@ -124,5 +127,9 @@ public class VoteService {
                 voteRepository.delete(vote);
             }
         }
+    }
+
+    public List<Vote> readVotes(Team team) {
+        return voteRepository.findAllByTeamId(team.getId());
     }
 }

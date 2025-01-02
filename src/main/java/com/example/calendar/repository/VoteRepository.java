@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface VoteRepository extends JpaRepository<Vote, Long> {
     List<Vote> findAllByStatus(VoteStatus status);
+
+    List<Vote> findAllByTeamId(long teamId);
 }

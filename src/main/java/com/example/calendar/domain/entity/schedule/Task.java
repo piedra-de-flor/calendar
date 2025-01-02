@@ -43,7 +43,7 @@ public class Task {
         this.description = description;
     }
 
-    public void update(TaskUpdateDto updateDto) {
+    public void update(TaskUpdateDto updateDto, Category category) {
         if (updateDto.date() != null) {
             this.date = updateDto.date();
         }
@@ -59,6 +59,8 @@ public class Task {
         if (updateDto.description() != null) {
             this.description = updateDto.description();
         }
+
+        this.category = category;
     }
 
     public void updateCategory(Category category) {

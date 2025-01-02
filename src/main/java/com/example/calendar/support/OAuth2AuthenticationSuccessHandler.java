@@ -51,6 +51,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 
         String redirectUrl = "http://woodking2.site/main";
+        //String redirectUrl = "http://localhost:3000/main";
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 

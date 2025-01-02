@@ -44,6 +44,7 @@ public class Vote {
         this.isMultipleChoice = isMultipleChoice;
         this.options = options;
         this.createdAt = LocalDateTime.now();
+        this.closedAt = LocalDateTime.now().plusDays(3);
     }
 
     public boolean isOpen() {

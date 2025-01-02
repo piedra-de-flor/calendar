@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -72,6 +73,24 @@ public class VoteFacadeService {
         }
 
         return voteService.readVote(vote);
+    }
+
+    public List<VoteDto> readVotes(String email, long teamId) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(NoSuchElementException::new);
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(NoSuchElementException::new);
+
+        if (member.getTeamings().stream()
+                .noneMatch(teaming -> teaming.getTeam().getId() == teamId)) {
+            throw new IllegalArgumentException("you don't have auth to read the vote about the team");
+        }
+
+        List<Vote> votes = voteService.readVotes(team);
+        return votes.stream()
+                .map(voteService::readVote)
+                .collect(Collectors.toList());
     }
 
     public VoteOptionDto readVoteOption(String email, long voteId, long voteOptionId) {

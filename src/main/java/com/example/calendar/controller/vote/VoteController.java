@@ -8,6 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 public class VoteController {
@@ -28,6 +30,15 @@ public class VoteController {
         String memberEmail = authentication.getName();
 
         boolean response = voteFacadeService.castVote(memberEmail, voteId, castVoteOptionsDto);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/votes/{teamId}")
+    public ResponseEntity<List<VoteDto>> readVotes(@PathVariable long teamId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        List<VoteDto> response = voteFacadeService.readVotes(memberEmail, teamId);
         return ResponseEntity.ok(response);
     }
 
