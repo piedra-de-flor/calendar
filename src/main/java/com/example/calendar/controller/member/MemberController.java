@@ -2,8 +2,11 @@ package com.example.calendar.controller.member;
 
 import com.example.calendar.dto.member.*;
 import com.example.calendar.service.member.MemberFacadeService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,9 +25,16 @@ public class MemberController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<JwtToken> signIn(@RequestBody SignInDto signInDto) {
+    public ResponseEntity<Void> signIn(@RequestBody SignInDto signInDto, HttpServletResponse response) {
         JwtToken token = service.signIn(signInDto);
-        return ResponseEntity.ok(token);
+        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", token.getAccessToken())
+                .secure(false)
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60)
+                .build();
+
+        response.setHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/member")
