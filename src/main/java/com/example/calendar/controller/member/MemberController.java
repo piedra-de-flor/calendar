@@ -25,17 +25,9 @@ public class MemberController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<Void> signIn(@RequestBody SignInDto signInDto, HttpServletResponse response) {
+    public ResponseEntity<JwtToken> signIn(@RequestBody SignInDto signInDto) {
         JwtToken token = service.signIn(signInDto);
-        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", token.getAccessToken())
-                .secure(false)
-                .sameSite("None")
-                .path("/")
-                .maxAge(7 * 24 * 60 * 60)
-                .build();
-
-        response.setHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(token);
     }
 
     @GetMapping("/member")
