@@ -13,7 +13,7 @@ public class NotificationContentService {
     }
 
     public String inviteTeam(Member sender, Team team) {
-        return sender.getName() + NotificationContents.SENDER.getContent() + team.getName() + NotificationContents.TEAM_INVITATION.getContent();
+        return sender.getName() + NotificationContents.SENDER.getContent() + " " + team.getName() + NotificationContents.TEAM_INVITATION.getContent();
     }
 
     public String acceptInvitation(Member receiver) {
@@ -25,6 +25,6 @@ public class NotificationContentService {
     }
 
     public String completeVote(Vote vote) {
-        return vote.getTeam().getName() + NotificationContents.SENDER_TEAM.getContent() + vote.getTitle() + NotificationContents.COMPLETE_VOTE.getContent();
+        return vote.getTeam().getName() + NotificationContents.SENDER_TEAM.getContent() + " " + vote.getTitle() + NotificationContents.COMPLETE_VOTE.getContent();
     }
 }
