@@ -29,27 +29,21 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class VoteFacadeServiceTest {
-
     @InjectMocks
     private VoteFacadeService voteFacadeService;
-
     @Mock
     private NotificationFacadeService notificationFacadeService;
-
     @Mock
     private VoteService voteService;
-
     @Mock
     private VoteOptionService voteOptionService;
-
     @Mock
     private MemberRepository memberRepository;
-
     @Mock
     private TeamRepository teamRepository;
 
     @Test
-    void createVote_성공_테스트() {
+    void 투표_생성_성공_테스트() {
         // Given
         String email = "creator@example.com";
         VoteCreateDto createDto = new VoteCreateDto(1L, "Test Vote", "Description", true, List.of("Option1", "Option2"));
@@ -61,7 +55,6 @@ class VoteFacadeServiceTest {
         VoteOption option1 = mock(VoteOption.class);
         VoteOption option2 = mock(VoteOption.class);
 
-        // Mock 설정
         when(memberRepository.findByEmail(email)).thenReturn(Optional.of(creator));
         when(teamRepository.findById(createDto.teamId())).thenReturn(Optional.of(team));
         when(team.getTeamings()).thenReturn(Set.of(teaming));
@@ -71,7 +64,6 @@ class VoteFacadeServiceTest {
         when(voteOptionService.createVoteOptions(createDto)).thenReturn(List.of(option1, option2));
         when(voteService.createVote(createDto, team, List.of(option1, option2))).thenReturn(vote);
 
-        // 알림 메시지와 URL
         String redirectUrl = NotificationRedirectUrl.VOTE_CREATED.getUrl();
         when(notificationFacadeService.voteCreateMessage(team)).thenReturn("Vote created successfully");
 
@@ -86,7 +78,7 @@ class VoteFacadeServiceTest {
     }
 
     @Test
-    void castVote_성공_테스트() {
+    void 투표_성공_테스트() {
         // Given
         String email = "voter@example.com";
         long voteId = 1L;
@@ -103,7 +95,7 @@ class VoteFacadeServiceTest {
     }
 
     @Test
-    void readVote_성공_테스트() {
+    void 투표_조회_성공_테스트() {
         // Given
         String email = "member@example.com";
         long voteId = 1L;
@@ -115,26 +107,26 @@ class VoteFacadeServiceTest {
         VoteDto voteDto = mock(VoteDto.class);
 
         // Mock 설정
-        when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member)); // 멤버 찾기
-        when(voteService.readVote(voteId)).thenReturn(vote); // 투표 읽기
-        when(vote.getTeam()).thenReturn(team); // 투표가 소속된 팀
-        when(member.getTeamings()).thenReturn(List.of(teaming)); // 멤버의 팀 정보
-        when(teaming.getTeam()).thenReturn(team); // 팀 정보
-        when(voteService.readVote(vote)).thenReturn(voteDto); // Vote를 기반으로 DTO 생성
+        when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
+        when(voteService.readVote(voteId)).thenReturn(vote);
+        when(vote.getTeam()).thenReturn(team);
+        when(member.getTeamings()).thenReturn(List.of(teaming));
+        when(teaming.getTeam()).thenReturn(team);
+        when(voteService.readVote(vote)).thenReturn(voteDto);
 
         // When
         VoteDto result = voteFacadeService.readVote(email, voteId);
 
         // Then
-        assertThat(result).isNotNull(); // 반환 값이 null이 아님을 확인
-        assertThat(result).isEqualTo(voteDto); // 예상 DTO와 일치 확인
-        verify(voteService, times(1)).readVote(voteId); // Vote ID로 투표 읽기 호출 검증
-        verify(voteService, times(1)).readVote(vote); // Vote 객체로 DTO 생성 호출 검증
+        assertThat(result).isNotNull();
+        assertThat(result).isEqualTo(voteDto);
+        verify(voteService, times(1)).readVote(voteId);
+        verify(voteService, times(1)).readVote(vote);
     }
 
 
     @Test
-    void getVoteResults_투표_결과_가져오기_성공_테스트() {
+    void 투표_결과_가져오기_성공_테스트() {
         // Given
         String email = "member@example.com";
         long voteId = 1L;
@@ -161,7 +153,7 @@ class VoteFacadeServiceTest {
     }
 
     @Test
-    void completeVote_성공_테스트() {
+    void 투표_완료_성공_테스트() {
         // Given
         String email = "creator@example.com";
         long voteId = 1L;

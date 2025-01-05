@@ -32,8 +32,7 @@ class VoteServiceTest {
     private VoteRepository voteRepository;
 
     @Test
-    void createVote_성공_테스트() {
-        // Given
+    void 투표_생성_성공_테스트() {
         Team team = mock(Team.class);
         List<VoteOption> options = List.of(
                 VoteOption.builder().optionText("Option1").build(),
@@ -44,16 +43,14 @@ class VoteServiceTest {
 
         when(voteRepository.save(any(Vote.class))).thenReturn(expectedVote);
 
-        // When
         Vote result = voteService.createVote(createDto, team, options);
 
-        // Then
         assertThat(result).isEqualTo(expectedVote);
         verify(voteRepository, times(1)).save(any(Vote.class));
     }
 
     @Test
-    void readVote_성공_테스트() {
+    void 투표_조회_성공_테스트() {
         // Given
         long voteId = 1L;
         Vote expectedVote = mock(Vote.class);
@@ -69,7 +66,7 @@ class VoteServiceTest {
     }
 
     @Test
-    void readVote_예외_테스트() {
+    void 투표_조회_예외_테스트() {
         // Given
         long voteId = 1L;
 
@@ -84,8 +81,7 @@ class VoteServiceTest {
     }
 
     @Test
-    void castVote_성공_테스트() {
-        // Given
+    void 투표_성공_테스트() {
         String voterEmail = "voter@example.com";
         long voteId = 1L;
         CastVoteOptionsDto castVoteOptionsDto = new CastVoteOptionsDto(List.of(1L));
@@ -96,71 +92,58 @@ class VoteServiceTest {
         when(vote.getOptions()).thenReturn(List.of(option));
         when(option.getId()).thenReturn(1L);
 
-        // When
         boolean result = voteService.castVote(voterEmail, voteId, castVoteOptionsDto);
 
-        // Then
         assertThat(result).isTrue();
         verify(voteRepository, times(1)).save(vote);
     }
 
     @Test
-    void castVote_예외_테스트_잘못된옵션ID() {
-        // Given
+    void 투표_예외_테스트_잘못된_옵션_ID() {
         String voterEmail = "voter@example.com";
         long voteId = 1L;
-        CastVoteOptionsDto castVoteOptionsDto = new CastVoteOptionsDto(List.of(99L)); // 잘못된 옵션 ID
+        CastVoteOptionsDto castVoteOptionsDto = new CastVoteOptionsDto(List.of(99L));
         Vote vote = mock(Vote.class);
 
         when(voteRepository.findById(voteId)).thenReturn(Optional.of(vote));
         when(vote.getOptions()).thenReturn(List.of());
 
-        // When & Then
         assertThatThrownBy(() -> voteService.castVote(voterEmail, voteId, castVoteOptionsDto))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Invalid option ID");
     }
 
     @Test
-    void closeVote_성공_테스트() {
-        // Given
+    void 투표_종료_성공_테스트() {
         Vote vote = mock(Vote.class);
 
-        // When
         voteService.closeVote(vote);
 
-        // Then
         verify(vote, times(1)).close();
         verify(voteRepository, times(1)).save(vote);
     }
 
     @Test
-    void closeExpiredVotes_성공_테스트() {
-        // Given
+    void 만료된_투표_종료_성공_테스트() {
         Vote vote = mock(Vote.class);
         when(vote.getCreatedAt()).thenReturn(LocalDateTime.now().minusDays(4));
         when(voteRepository.findAllByStatus(VoteStatus.OPEN)).thenReturn(List.of(vote));
 
-        // When
         voteService.closeExpiredVotes();
 
-        // Then
         verify(voteRepository, times(1)).findAllByStatus(VoteStatus.OPEN);
         verify(vote, times(1)).close();
         verify(voteRepository, times(1)).saveAll(anyList());
     }
 
     @Test
-    void deleteExpiredVotes_성공_테스트() {
-        // Given
+    void 만료된_투표_삭제_성공_테스트() {
         Vote vote = mock(Vote.class);
         when(vote.getClosedAt()).thenReturn(LocalDateTime.now().minusDays(8));
         when(voteRepository.findAllByStatus(VoteStatus.CLOSED)).thenReturn(List.of(vote));
 
-        // When
         voteService.deleteExpiredVotes();
 
-        // Then
         verify(voteRepository, times(1)).findAllByStatus(VoteStatus.CLOSED);
         verify(voteRepository, times(1)).delete(vote);
     }

@@ -27,7 +27,7 @@ class VoteOptionServiceTest {
     private VoteOptionRepository voteOptionRepository;
 
     @Test
-    void createVoteOptions_성공_테스트() {
+    void 투표_옵션_생성_성공_테스트() {
         // Given
         VoteCreateDto createDto = new VoteCreateDto(1L, "Test Vote", "Description", true, List.of("Option1", "Option2"));
 
@@ -35,7 +35,7 @@ class VoteOptionServiceTest {
         VoteOption option2 = VoteOption.builder().optionText("Option2").build();
 
         when(voteOptionRepository.save(any(VoteOption.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0)); // 저장된 객체 그대로 반환
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         // When
         List<VoteOption> result = voteOptionService.createVoteOptions(createDto);
@@ -45,11 +45,11 @@ class VoteOptionServiceTest {
         assertThat(result.get(0).getOptionText()).isEqualTo("Option1");
         assertThat(result.get(1).getOptionText()).isEqualTo("Option2");
 
-        verify(voteOptionRepository, times(2)).save(any(VoteOption.class)); // 저장 호출 검증
+        verify(voteOptionRepository, times(2)).save(any(VoteOption.class));
     }
 
     @Test
-    void readVoteOption_성공_테스트() {
+    void 투표_옵션_조회_성공_테스트() {
         // Given
         long voteOptionId = 1L;
         VoteOption expectedOption = VoteOption.builder().optionText("Option1").build();
@@ -63,11 +63,11 @@ class VoteOptionServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getOptionText()).isEqualTo("Option1");
 
-        verify(voteOptionRepository, times(1)).findById(voteOptionId); // 조회 호출 검증
+        verify(voteOptionRepository, times(1)).findById(voteOptionId);
     }
 
     @Test
-    void readVoteOption_예외_테스트() {
+    void 투표_옵션_조회_예외_테스트() {
         // Given
         long voteOptionId = 1L;
 
@@ -78,6 +78,6 @@ class VoteOptionServiceTest {
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessage("can't find vote option");
 
-        verify(voteOptionRepository, times(1)).findById(voteOptionId); // 조회 호출 검증
+        verify(voteOptionRepository, times(1)).findById(voteOptionId);
     }
 }

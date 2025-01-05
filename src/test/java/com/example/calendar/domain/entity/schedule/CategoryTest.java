@@ -12,7 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 class CategoryTest {
-
     private Category category;
     private CategoryInfo mockCategoryInfo;
     private Member mockMember;

@@ -9,7 +9,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class TeamTest {
-
     @Test
     void 팀_추가_테스트() {
         Team team = new Team("test");
