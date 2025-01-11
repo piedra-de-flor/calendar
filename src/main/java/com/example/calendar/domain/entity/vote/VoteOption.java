@@ -42,4 +42,8 @@ public class VoteOption {
     public void setVote(Vote vote) {
         this.vote = vote;
     }
+
+    public boolean isCasted(String email) {
+        return voters.contains(email);
+    }
 }

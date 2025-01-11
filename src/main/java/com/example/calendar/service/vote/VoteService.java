@@ -90,14 +90,18 @@ public class VoteService {
     public VoteResultDto getVoteResults(Vote vote) {
         Map<Long, String> result = new HashMap<>();
 
-        VoteOption winner = vote.getOptions().stream()
-                .max(Comparator.comparingInt(VoteOption::getVoterNumber))
+        int maxVotes = vote.getOptions().stream()
+                .mapToInt(VoteOption::getVoterNumber)
+                .max()
                 .orElseThrow(() -> new NoSuchElementException("No options available"));
 
-        result.put(winner.getId(), winner.getOptionText());
+        vote.getOptions().stream()
+                .filter(option -> option.getVoterNumber() == maxVotes)
+                .forEach(option -> result.put(option.getId(), option.getOptionText()));
 
         return new VoteResultDto(vote.getId(), result);
     }
+
 
     @Transactional
     public void closeVote(Vote vote) {

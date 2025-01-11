@@ -51,15 +51,6 @@ public class VoteController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/vote/option/{voteId}/{voteOptionId}")
-    public ResponseEntity<VoteOptionDto> readVoteOption(@PathVariable long voteId, @PathVariable long voteOptionId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String memberEmail = authentication.getName();
-
-        VoteOptionDto response = voteFacadeService.readVoteOption(memberEmail, voteId, voteOptionId);
-        return ResponseEntity.ok(response);
-    }
-
     @PatchMapping("/vote/status/{voteId}")
     public ResponseEntity<Boolean> completeVote(@PathVariable long voteId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -75,6 +66,24 @@ public class VoteController {
         String memberEmail = authentication.getName();
 
         VoteResultDto response = voteFacadeService.getVoteResults(memberEmail, voteId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/cast/whether/{voteId}")
+    public ResponseEntity<Boolean> isCasted(@PathVariable long voteId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        Boolean response = voteFacadeService.isCasted(memberEmail, voteId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/casted/options/{voteId}")
+    public ResponseEntity<List<Long>> whatICasted(@PathVariable long voteId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberEmail = authentication.getName();
+
+        List<Long> response = voteFacadeService.readOptionsICasted(memberEmail, voteId);
         return ResponseEntity.ok(response);
     }
 }

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -57,5 +58,17 @@ public class Vote {
         }
         this.status = VoteStatus.CLOSED;
         this.closedAt = LocalDateTime.now();
+    }
+
+    public List<VoteOption> castedOptions(String email) {
+        List<VoteOption> response = new ArrayList<>();
+
+        for (VoteOption option : options) {
+            if (option.isCasted(email)) {
+                response.add(option);
+            }
+        }
+
+        return response;
     }
 }

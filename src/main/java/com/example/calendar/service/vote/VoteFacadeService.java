@@ -7,8 +7,10 @@ import com.example.calendar.domain.entity.vote.Vote;
 import com.example.calendar.domain.entity.vote.VoteOption;
 import com.example.calendar.domain.vo.notification.NotificationRedirectUrl;
 import com.example.calendar.domain.vo.notification.NotificationType;
-import com.example.calendar.dto.member.MemberDto;
-import com.example.calendar.dto.vote.*;
+import com.example.calendar.dto.vote.CastVoteOptionsDto;
+import com.example.calendar.dto.vote.VoteCreateDto;
+import com.example.calendar.dto.vote.VoteDto;
+import com.example.calendar.dto.vote.VoteResultDto;
 import com.example.calendar.repository.MemberRepository;
 import com.example.calendar.repository.TeamRepository;
 import com.example.calendar.service.notification.NotificationFacadeService;
@@ -16,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -93,35 +94,6 @@ public class VoteFacadeService {
                 .collect(Collectors.toList());
     }
 
-    public VoteOptionDto readVoteOption(String email, long voteId, long voteOptionId) {
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(NoSuchElementException::new);
-
-        Vote vote = voteService.readVote(voteId);
-
-        if (member.getTeamings().stream()
-                .noneMatch(teaming -> teaming.getTeam().getId() == vote.getTeam().getId())) {
-            throw new IllegalArgumentException("you don't have auth to read the vote about the team");
-        }
-
-        VoteOption voteOption = voteOptionService.readVoteOption(voteOptionId);
-
-        if (!vote.getOptions().contains(voteOption)) {
-            throw new IllegalArgumentException("Invalid Option ID");
-        }
-
-        List<MemberDto> voters = new ArrayList<>();
-        for (String voterEmail : voteOption.getVoters()) {
-            Member voter = memberRepository.findByEmail(voterEmail)
-                    .orElseThrow(NoSuchElementException::new);
-
-            MemberDto memberDto = new MemberDto(voter.getName(), voter.getEmail());
-            voters.add(memberDto);
-        }
-
-        return new VoteOptionDto(voteOption.getOptionText(), voters);
-    }
-
     public VoteResultDto getVoteResults(String email, long voteId) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(NoSuchElementException::new);
@@ -159,5 +131,31 @@ public class VoteFacadeService {
         }
 
         return true;
+    }
+
+    public boolean isCasted(String email, long voteId) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(NoSuchElementException::new);
+
+        Vote vote = voteService.readVote(voteId);
+
+        for (VoteOption option : vote.getOptions()) {
+            if (option.isCasted(member.getEmail())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public List<Long> readOptionsICasted(String email, long voteId) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(NoSuchElementException::new);
+
+        Vote vote = voteService.readVote(voteId);
+
+        return vote.castedOptions(member.getEmail()).stream()
+                .map(VoteOption::getId)
+                .collect(Collectors.toList());
     }
 }
