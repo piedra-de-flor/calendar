@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,13 +28,15 @@ public class MemberController {
     public ResponseEntity<JwtToken> signIn(@RequestBody SignInDto signInDto, HttpServletResponse response) {
         JwtToken token = service.signIn(signInDto);
 
-        Cookie cookie = new Cookie("accessToken", token.getAccessToken());
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(60 * 60 * 24);
+        ResponseCookie cookie = ResponseCookie.from("accessToken", token.getAccessToken())
+                .path("/")
+                .sameSite("None")
+                .httpOnly(false)
+                .secure(true)
+                .maxAge(60 * 60 * 24)
+                .build();
 
-        response.addCookie(cookie);
+        response.addHeader("Set-Cookie", cookie.toString());
         return ResponseEntity.ok().build();
     }
 
