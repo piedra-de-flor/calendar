@@ -27,7 +27,7 @@ public class MemberController {
     public ResponseEntity<JwtToken> signIn(@RequestBody SignInDto signInDto, HttpServletResponse response) {
         JwtToken token = service.signIn(signInDto);
 
-        Cookie cookie = new Cookie("access", token.getAccessToken());
+        Cookie cookie = new Cookie("accessToken", token.getAccessToken());
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
