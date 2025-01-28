@@ -79,7 +79,11 @@ public class TaskService {
         LocalDate date = startDate;
         while (date.isBefore(endDate)) {
             DailyTaskDto day = new DailyTaskDto(getTodayTasks(member, date));
-            dailyTaskDtos.add(day);
+
+            if (!day.taskDtos().isEmpty()) {
+                dailyTaskDtos.add(day);
+            }
+
             date = date.plusDays(1);
         }
 
@@ -96,6 +100,7 @@ public class TaskService {
         if (member.getId() == task.getMember().getId()) {
             return new TaskDto(
                     taskId,
+                    task.getDate(),
                     task.getCategory().getId(),
                     task.getCategory().getCategoryName(),
                     task.getCategory().getCategoryColor(),
@@ -117,6 +122,7 @@ public class TaskService {
         for (Task task : todayTasks) {
             taskDtos.add(new TaskDto(
                     task.getId(),
+                    date,
                     task.getCategory().getId(),
                     task.getCategory().getCategoryName(),
                     task.getCategory().getCategoryColor(),

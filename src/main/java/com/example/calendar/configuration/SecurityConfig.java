@@ -43,8 +43,8 @@ public class SecurityConfig {
         return httpSecurity
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    //config.setAllowedOrigins(List.of("http://woodking2.site"));
-                    config.setAllowedOrigins(List.of("http://localhost:3000"));
+                    config.setAllowedOrigins(List.of("http://woodking2.site"));
+                    //config.setAllowedOrigins(List.of("http://localhost:3000"));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Cache-Control", "Last-Event-ID"));
                     config.setExposedHeaders(List.of("Cache-Control", "Content-Type", "Last-Event-ID"));
@@ -73,7 +73,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(401); // HTTP 401 Unauthorized
                             response.setContentType("application/json");
-                            response.getWriter().write("{\"error\": " + exception +" }");
+                            response.getWriter().write("{\"error\": login error }");
                         })
                 )
                 .addFilterBefore(new JwtAuthFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)

@@ -1,5 +1,7 @@
 package com.example.calendar.dto.member;
 
+import com.example.calendar.dto.exception.RequestValidationException;
+
 import java.util.Objects;
 
 public record MemberUpdateDto(
@@ -8,14 +10,19 @@ public record MemberUpdateDto(
         String newPassword
 ) {
     public MemberUpdateDto {
-        Objects.requireNonNull(password, "Password must not be null");
+        requireNonNull(password, "Password must not be null");
 
         if (newPassword.length() < 5 || newPassword.length() > 20) {
-            throw new IllegalArgumentException("Password must be between 5 and 20 characters");
+            throw new RequestValidationException("Password must be between 5 and 20 characters");
         }
 
         if (name.length() < 2) {
-            throw new IllegalArgumentException("Name must be at least 2 characters long");
+            throw new RequestValidationException("Name must be at least 2 characters long");
         }
+    }
+
+    private static <T> void requireNonNull(T obj, String message) {
+        if (obj == null)
+            throw new RequestValidationException(message);
     }
 }
