@@ -31,7 +31,7 @@ public class JwtAuthFilter extends GenericFilterBean {
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Cookie");
         String token = bearerToken.split("=")[1];
-        bearerToken = "Bearer" + token;
+        bearerToken = "Bearer " + token;
 
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
             return bearerToken.substring(7);
