@@ -25,6 +25,9 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+application-secrets.properties
+credentials.json
+tokens/
 
 ### NetBeans ###
 /nbproject/private/
